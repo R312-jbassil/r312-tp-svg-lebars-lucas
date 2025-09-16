@@ -16,6 +16,7 @@
     "color-string": "^2.1.2",
     "daisyui": "^5.1.12",
     "openai": "^5.20.3",
+    "pocketbase": "^0.26.2",
     "tailwindcss": "^4.1.13"
   }
 }

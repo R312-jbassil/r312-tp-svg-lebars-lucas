@@ -42,28 +42,22 @@ import "../styles/global.css";
                 <!-- Zone d'affichage SVG -->
                 <div class="flex-1 p-4 flex items-center justify-center bg-gray-800 min-h-0">
                     <div id="svg-container" class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center">
-                        <svg width="250" height="160" xmlns="http://www.w3.org/2000/svg" class="shadow-lg">
-                            <!-- SVG avec couleurs violettes -->
-                            <defs>
-                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="20" y="20" width="210" height="120" fill="url(#grad1)" stroke="#7c3aed" stroke-width="3" rx="15"/>
-                            <circle cx="125" cy="80" r="30" fill="#a78bfa" fill-opacity="0.8" stroke="#8b5cf6" stroke-width="2"/>
-                            <polygon points="110,60 140,60 125,40" fill="#c4b5fd" stroke="#a78bfa" stroke-width="2"/>
-                            <text x="125" y="88" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">SVG</text>
-                        </svg>
+                        <div class="text-center text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-lg font-medium">Aucun SVG généré</p>
+                            <p class="text-sm text-gray-400 mt-2">Entrez une description et cliquez sur "Générer SVG"</p>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Stats en bas -->
                 <div class="px-4 py-2 bg-gray-750 border-t border-gray-700 rounded-b-2xl">
                     <div class="flex justify-between text-xs text-gray-400">
-                        <span>250×160px</span>
-                        <span>4 éléments</span>
-                        <span>1.1 KB</span>
+                        <span>--×--px</span>
+                        <span>0 éléments</span>
+                        <span>-- KB</span>
                     </div>
                 </div>
             </div>
@@ -83,33 +77,22 @@ import "../styles/global.css";
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <button class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Copy</button>
-                        <button class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Download</button>
+                        <button id="copy-btn" class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Copy</button>
+                        <button id="save-btn" class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors">Sauvegarder</button>
                     </div>
                 </div>
                 
                 <!-- Zone de code -->
                 <div class="flex-1 p-4 min-h-0">
-                    <pre id="svg-output" class="text-xs text-gray-300 leading-tight h-full"><code>&lt;<span class="text-violet-400">svg</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"250"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"160"</span> <span class="text-purple-400">xmlns</span>=<span class="text-yellow-400">"http://www.w3.org/2000/svg"</span>&gt;
-  &lt;<span class="text-violet-400">defs</span>&gt;
-    &lt;<span class="text-violet-400">linearGradient</span> <span class="text-purple-400">id</span>=<span class="text-yellow-400">"grad1"</span> <span class="text-purple-400">x1</span>=<span class="text-yellow-400">"0%"</span> <span class="text-purple-400">y1</span>=<span class="text-yellow-400">"0%"</span> <span class="text-purple-400">x2</span>=<span class="text-yellow-400">"100%"</span> <span class="text-purple-400">y2</span>=<span class="text-yellow-400">"100%"</span>&gt;
-      &lt;<span class="text-violet-400">stop</span> <span class="text-purple-400">offset</span>=<span class="text-yellow-400">"0%"</span> <span class="text-purple-400">style</span>=<span class="text-yellow-400">"stop-color:#8b5cf6;stop-opacity:1"</span> /&gt;
-      &lt;<span class="text-violet-400">stop</span> <span class="text-purple-400">offset</span>=<span class="text-yellow-400">"100%"</span> <span class="text-purple-400">style</span>=<span class="text-yellow-400">"stop-color:#7c3aed;stop-opacity:1"</span> /&gt;
-    &lt;/<span class="text-violet-400">linearGradient</span>&gt;
-  &lt;/<span class="text-violet-400">defs</span>&gt;
-  
-  &lt;<span class="text-violet-400">rect</span> <span class="text-purple-400">x</span>=<span class="text-yellow-400">"20"</span> <span class="text-purple-400">y</span>=<span class="text-yellow-400">"20"</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"210"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"120"</span> 
-       <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"url(#grad1)"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#7c3aed"</span> <span class="text-purple-400">rx</span>=<span class="text-yellow-400">"15"</span>/&gt;
-  
-  &lt;<span class="text-violet-400">circle</span> <span class="text-purple-400">cx</span>=<span class="text-yellow-400">"125"</span> <span class="text-purple-400">cy</span>=<span class="text-yellow-400">"80"</span> <span class="text-purple-400">r</span>=<span class="text-yellow-400">"30"</span> 
-          <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#a78bfa"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#8b5cf6"</span>/&gt;
-  
-  &lt;<span class="text-violet-400">polygon</span> <span class="text-purple-400">points</span>=<span class="text-yellow-400">"110,60 140,60 125,40"</span> 
-           <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#c4b5fd"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#a78bfa"</span>/&gt;
-  
-  &lt;<span class="text-violet-400">text</span> <span class="text-purple-400">x</span>=<span class="text-yellow-400">"125"</span> <span class="text-purple-400">y</span>=<span class="text-yellow-400">"88"</span> <span class="text-purple-400">text-anchor</span>=<span class="text-yellow-400">"middle"</span> 
-        <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"white"</span> <span class="text-purple-400">font-size</span>=<span class="text-yellow-400">"12"</span>&gt;SVG&lt;/<span class="text-violet-400">text</span>&gt;
-&lt;/<span class="text-violet-400">svg</span>&gt;</code></pre>
+                    <div id="svg-output" class="text-xs text-gray-300 leading-tight h-full flex items-center justify-center">
+                        <div class="text-center text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                            <p class="text-sm font-medium">Aucun code généré</p>
+                            <p class="text-xs text-gray-400 mt-1">Le code SVG apparaîtra ici</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -143,11 +126,80 @@ import "../styles/global.css";
             </div>
         </div>
     </div>
+
+    <!-- Modal de sauvegarde -->
+    <div id="save-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4" style="display: none;">
+        <div class="bg-gray-800 rounded-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">Sauvegarder le SVG</h3>
+                    <button id="close-save-modal" class="text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="save-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Titre *</label>
+                        <input 
+                            type="text" 
+                            id="save-title"
+                            required
+                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="Mon SVG génial"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Créé par</label>
+                        <input 
+                            type="text" 
+                            id="save-author"
+                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="Votre nom (optionnel)"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Tags</label>
+                        <input 
+                            type="text" 
+                            id="save-tags"
+                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="logo, violet, design (optionnel)"
+                        />
+                    </div>
+                    
+                    <div class="flex gap-3 pt-4">
+                        <button 
+                            type="button" 
+                            id="cancel-save"
+                            class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                        >
+                            Annuler
+                        </button>
+                        <button 
+                            type="submit"
+                            class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                        >
+                            Sauvegarder
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
 <script>
     //@ts-nocheck
+    
+    // Variables globales pour la sauvegarde
+    let currentSvgCode = '';
+    let currentPrompt = '';
 	
 	async function generateSVG(prompt) {
 		console.log('Generating SVG for prompt:', prompt);
@@ -165,17 +217,153 @@ import "../styles/global.css";
         let svgCode = "";
         const promptElement = document.getElementById("user-prompt");
         prompt = promptElement ? promptElement.value : "";
-        console.log('submitted: ', prompt); // message affiché sur votre console d'inspecteur dans le navigateur
+        console.log('submitted: ', prompt);
+        
         const svgContainer = document.getElementById("svg-container");
-        let svgOutput = document.getElementById("svg-output");
-        svgCode = await generateSVG(prompt);
-        console.log('svgCode: ', svgCode);
-        svgOutput.textContent = svgCode;
-        svgContainer.innerHTML = `<span class="loading loading-ring loading-xl"></span>`;
+        const svgOutput = document.getElementById("svg-output");
+        const generateButton = document.getElementById("generate-button");
+        
+        // Afficher un loader pendant la génération
+        svgContainer.innerHTML = `
+            <div class="text-center text-violet-400">
+                <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-violet-500 border-t-transparent"></div>
+                <p class="mt-4 text-lg font-medium">Génération en cours...</p>
+                <p class="text-sm text-gray-400">Création de votre SVG</p>
+            </div>
+        `;
+        
+        svgOutput.innerHTML = `
+            <div class="text-center text-violet-400">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-violet-500 border-t-transparent"></div>
+                <p class="mt-2 text-sm">Génération du code...</p>
+            </div>
+        `;
+        
         generateButton.disabled = true;
+        
+        try {
+            svgCode = await generateSVG(prompt);
+            console.log('svgCode: ', svgCode);
+            
+            // Sauvegarder dans les variables globales pour la sauvegarde
+            currentSvgCode = svgCode;
+            currentPrompt = prompt;
+            
+            // Afficher le SVG généré
+            svgContainer.innerHTML = svgCode;
+            
+            // Afficher le code avec coloration syntaxique
+            svgOutput.innerHTML = `<pre class="text-xs text-gray-300 leading-tight h-full overflow-auto"><code>${escapeHtml(svgCode)}</code></pre>`;
+            
+        } catch (error) {
+            console.error('Error generating SVG:', error);
+            
+            // Afficher l'erreur
+            svgContainer.innerHTML = `
+                <div class="text-center text-red-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <p class="text-lg font-medium">Erreur de génération</p>
+                    <p class="text-sm text-gray-400 mt-2">Veuillez réessayer</p>
+                </div>
+            `;
+            
+            svgOutput.innerHTML = `
+                <div class="text-center text-red-400">
+                    <p class="text-sm font-medium">Erreur lors de la génération</p>
+                    <p class="text-xs text-gray-400 mt-1">${error.message}</p>
+                </div>
+            `;
+        } finally {
+            generateButton.disabled = false;
+        }
 	}
+    
+    // Fonction pour échapper le HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Event listeners
     const generateButton = document.getElementById("generate-button");
-	if (generateButton) {
-		generateButton.addEventListener("click", handleSubmit);
-	}
+    if (generateButton) {
+        generateButton.addEventListener("click", handleSubmit);
+    }
+
+    // Gestion de la sauvegarde
+    const saveBtn = document.getElementById("save-btn");
+    const saveModal = document.getElementById("save-modal");
+    const closeSaveModal = document.getElementById("close-save-modal");
+    const cancelSave = document.getElementById("cancel-save");
+    const saveForm = document.getElementById("save-form");
+
+    if (saveBtn) {
+        saveBtn.addEventListener("click", () => {
+            if (currentSvgCode) {
+                document.getElementById("save-title").value = '';
+                document.getElementById("save-author").value = '';
+                document.getElementById("save-tags").value = '';
+                saveModal.style.display = 'flex';
+            } else {
+                alert("Aucun SVG à sauvegarder. Générez d'abord un SVG !");
+            }
+        });
+    }
+
+    if (closeSaveModal) {
+        closeSaveModal.addEventListener("click", () => {
+            saveModal.style.display = 'none';
+        });
+    }
+
+    if (cancelSave) {
+        cancelSave.addEventListener("click", () => {
+            saveModal.style.display = 'none';
+        });
+    }
+
+    if (saveForm) {
+        saveForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById("save-title").value.trim();
+            const author = document.getElementById("save-author").value.trim() || 'Anonyme';
+            const tags = document.getElementById("save-tags").value.trim();
+
+            if (!title) {
+                alert("Le titre est requis !");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/saveSVG', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        prompt: currentPrompt,
+                        svg_code: currentSvgCode,
+                        created_by: author,
+                        tags: tags
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("SVG sauvegardé avec succès !");
+                    saveModal.style.display = 'none';
+                } else {
+                    alert("Erreur lors de la sauvegarde : " + result.error);
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert("Erreur lors de la sauvegarde : " + error.message);
+            }
+        });
+    }
+
 </script>
