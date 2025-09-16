@@ -1,0 +1,128 @@
+---
+// Logique côté serveur (optionnelle)
+const title = "Générateur SVG";
+import "../styles/global.css";
+---
+
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+</head>
+<body class="bg-gray-900">
+    <div class="h-screen flex flex-col">
+        <!-- Navigation horizontale en haut -->
+        <nav class="bg-gray-800 shadow-lg border-b border-gray-700">
+            <div class="px-6 py-3">
+                <div class="flex space-x-8">
+                    <a href="/" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Home</a>
+                    <a href="/generator" class="text-violet-400 font-medium border-b-2 border-violet-500 pb-1">Generator</a>
+                    <a href="/library" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Library</a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Zone principale avec deux panneaux -->
+        <div class="flex-1 flex bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 p-4 gap-4 min-h-0">
+            <!-- Panneau gauche : SVG Viewer (fond sombre) -->s
+            <div class="w-1/2 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 flex flex-col">
+                <!-- Header du viewer -->
+                <div class="px-4 py-2 border-b border-gray-700 bg-gray-750 rounded-t-2xl">
+                    <h2 class="text-sm font-semibold text-violet-300">SVG Preview</h2>
+                </div>
+                
+                <!-- Zone d'affichage SVG -->
+                <div class="flex-1 p-4 flex items-center justify-center bg-gray-800 min-h-0">
+                    <div class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center">
+                        <svg width="250" height="160" xmlns="http://www.w3.org/2000/svg" class="shadow-lg">
+                            <!-- Voiture avec couleurs adaptées au thème sombre -->
+                            <rect x="40" y="80" width="170" height="50" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2" rx="6"/>
+                            <rect x="55" y="65" width="140" height="30" fill="#a78bfa" stroke="#8b5cf6" stroke-width="2" rx="4"/>
+                            <!-- Roues -->
+                            <circle cx="75" cy="130" r="15" fill="#374151" stroke="#4b5563" stroke-width="2"/>
+                            <circle cx="175" cy="130" r="15" fill="#374151" stroke="#4b5563" stroke-width="2"/>
+                            <!-- Détails roues -->
+                            <circle cx="75" cy="130" r="6" fill="#6b7280"/>
+                            <circle cx="175" cy="130" r="6" fill="#6b7280"/>
+                            <!-- Fenêtres -->
+                            <rect x="65" y="72" width="50" height="20" fill="#1e293b" stroke="#334155" stroke-width="1" rx="2"/>
+                            <rect x="135" y="72" width="50" height="20" fill="#1e293b" stroke="#334155" stroke-width="1" rx="2"/>
+                            <!-- Phare -->
+                            <circle cx="210" cy="105" r="6" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Stats en bas -->
+                <div class="px-4 py-2 bg-gray-750 border-t border-gray-700 rounded-b-2xl">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>250×160px</span>
+                        <span>7 éléments</span>
+                        <span>1.1 KB</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panneau droit : Code (fond très sombre) -->
+            <div class="w-1/2 bg-black rounded-2xl shadow-xl border border-gray-800 flex flex-col">
+                <!-- Header du code avec boutons -->
+                <div class="px-4 py-2 border-b border-gray-800 flex items-center justify-between rounded-t-2xl bg-gray-900">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="ml-3 text-gray-400 text-xs">generated.svg</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Copy</button>
+                        <button class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Download</button>
+                    </div>
+                </div>
+                
+                <!-- Zone de code -->
+                <div class="flex-1 p-4 min-h-0">
+                    <pre class="text-xs text-gray-300 leading-tight h-full"><code>&lt;<span class="text-violet-400">svg</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"250"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"160"</span> <span class="text-purple-400">xmlns</span>=<span class="text-yellow-400">"http://www.w3.org/2000/svg"</span>&gt;
+  <span class="text-gray-500">&lt;!-- Car Body --&gt;</span>
+  &lt;<span class="text-violet-400">rect</span> <span class="text-purple-400">x</span>=<span class="text-yellow-400">"40"</span> <span class="text-purple-400">y</span>=<span class="text-yellow-400">"80"</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"170"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"50"</span> 
+       <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#8b5cf6"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#7c3aed"</span> <span class="text-purple-400">rx</span>=<span class="text-yellow-400">"6"</span>/&gt;
+  
+  <span class="text-gray-500">&lt;!-- Car Roof --&gt;</span>
+  &lt;<span class="text-violet-400">rect</span> <span class="text-purple-400">x</span>=<span class="text-yellow-400">"55"</span> <span class="text-purple-400">y</span>=<span class="text-yellow-400">"65"</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"140"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"30"</span> 
+       <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#a78bfa"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#8b5cf6"</span> <span class="text-purple-400">rx</span>=<span class="text-yellow-400">"4"</span>/&gt;
+  
+  <span class="text-gray-500">&lt;!-- Wheels --&gt;</span>
+  &lt;<span class="text-violet-400">circle</span> <span class="text-purple-400">cx</span>=<span class="text-yellow-400">"75"</span> <span class="text-purple-400">cy</span>=<span class="text-yellow-400">"130"</span> <span class="text-purple-400">r</span>=<span class="text-yellow-400">"15"</span> <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#374151"</span>/&gt;
+  &lt;<span class="text-violet-400">circle</span> <span class="text-purple-400">cx</span>=<span class="text-yellow-400">"175"</span> <span class="text-purple-400">cy</span>=<span class="text-yellow-400">"130"</span> <span class="text-purple-400">r</span>=<span class="text-yellow-400">"15"</span> <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#374151"</span>/&gt;
+  
+  <span class="text-gray-500">&lt;!-- Windows --&gt;</span>
+  &lt;<span class="text-violet-400">rect</span> <span class="text-purple-400">x</span>=<span class="text-yellow-400">"65"</span> <span class="text-purple-400">y</span>=<span class="text-yellow-400">"72"</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"50"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"20"</span> 
+       <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#1e293b"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#334155"</span> <span class="text-purple-400">rx</span>=<span class="text-yellow-400">"2"</span>/&gt;
+  &lt;<span class="text-violet-400">rect</span> <span class="text-purple-400">x</span>=<span class="text-yellow-400">"135"</span> <span class="text-purple-400">y</span>=<span class="text-yellow-400">"72"</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"50"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"20"</span> 
+       <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#1e293b"</span> <span class="text-purple-400">stroke</span>=<span class="text-yellow-400">"#334155"</span> <span class="text-purple-400">rx</span>=<span class="text-yellow-400">"2"</span>/&gt;
+  
+  <span class="text-gray-500">&lt;!-- Headlight --&gt;</span>
+  &lt;<span class="text-violet-400">circle</span> <span class="text-purple-400">cx</span>=<span class="text-yellow-400">"210"</span> <span class="text-purple-400">cy</span>=<span class="text-yellow-400">"105"</span> <span class="text-purple-400">r</span>=<span class="text-yellow-400">"6"</span> <span class="text-purple-400">fill</span>=<span class="text-yellow-400">"#fbbf24"</span>/&gt;
+&lt;/<span class="text-violet-400">svg</span>&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barre de contrôle en bas -->
+        <div class="bg-gray-800 border-t border-gray-700 shadow-xl p-4">
+            <div class="max-w-6xl mx-auto flex items-center gap-4">
+                <input 
+                    type="text" 
+                    class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
+                    placeholder="Describe your SVG: a purple car with dark windows and wheels..."
+                    value="car"
+                />
+                <button class="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-violet-500/25">
+                    Generate
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
