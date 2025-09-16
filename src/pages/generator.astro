@@ -41,7 +41,7 @@ import "../styles/global.css";
                 
                 <!-- Zone d'affichage SVG -->
                 <div class="flex-1 p-4 flex items-center justify-center bg-gray-800 min-h-0">
-                    <div class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center">
+                    <div id="svg-container" class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center">
                         <svg width="250" height="160" xmlns="http://www.w3.org/2000/svg" class="shadow-lg">
                             <!-- SVG avec couleurs violettes -->
                             <defs>
@@ -90,7 +90,7 @@ import "../styles/global.css";
                 
                 <!-- Zone de code -->
                 <div class="flex-1 p-4 min-h-0">
-                    <pre class="text-xs text-gray-300 leading-tight h-full"><code>&lt;<span class="text-violet-400">svg</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"250"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"160"</span> <span class="text-purple-400">xmlns</span>=<span class="text-yellow-400">"http://www.w3.org/2000/svg"</span>&gt;
+                    <pre id="svg-output" class="text-xs text-gray-300 leading-tight h-full"><code>&lt;<span class="text-violet-400">svg</span> <span class="text-purple-400">width</span>=<span class="text-yellow-400">"250"</span> <span class="text-purple-400">height</span>=<span class="text-yellow-400">"160"</span> <span class="text-purple-400">xmlns</span>=<span class="text-yellow-400">"http://www.w3.org/2000/svg"</span>&gt;
   &lt;<span class="text-violet-400">defs</span>&gt;
     &lt;<span class="text-violet-400">linearGradient</span> <span class="text-purple-400">id</span>=<span class="text-yellow-400">"grad1"</span> <span class="text-purple-400">x1</span>=<span class="text-yellow-400">"0%"</span> <span class="text-purple-400">y1</span>=<span class="text-yellow-400">"0%"</span> <span class="text-purple-400">x2</span>=<span class="text-yellow-400">"100%"</span> <span class="text-purple-400">y2</span>=<span class="text-yellow-400">"100%"</span>&gt;
       &lt;<span class="text-violet-400">stop</span> <span class="text-purple-400">offset</span>=<span class="text-yellow-400">"0%"</span> <span class="text-purple-400">style</span>=<span class="text-yellow-400">"stop-color:#8b5cf6;stop-opacity:1"</span> /&gt;
@@ -127,12 +127,13 @@ import "../styles/global.css";
                     
                     <!-- Textarea pour le prompt -->
                     <textarea 
+                        id="user-prompt"
                         class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none h-16" 
                         placeholder="Décrivez le SVG que vous souhaitez générer : un logo avec un cercle violet, un triangle et du texte..."
                     ></textarea>
                     
                     <!-- Bouton de génération -->
-                    <button class="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-violet-500/25 flex items-center gap-2 h-16">
+                    <button id="generate-button" class="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-violet-500/25 flex items-center gap-2 h-16">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
@@ -144,3 +145,37 @@ import "../styles/global.css";
     </div>
 </body>
 </html>
+
+<script>
+    //@ts-nocheck
+	
+	async function generateSVG(prompt) {
+		console.log('Generating SVG for prompt:', prompt);
+		const res = await fetch('/api/generateSVG', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ prompt }),
+		});
+		const data = await res.json();
+		return data.svg;
+	}
+
+	async function handleSubmit() {
+        let prompt = "";
+        let svgCode = "";
+        const promptElement = document.getElementById("user-prompt");
+        prompt = promptElement ? promptElement.value : "";
+        console.log('submitted: ', prompt); // message affiché sur votre console d'inspecteur dans le navigateur
+        const svgContainer = document.getElementById("svg-container");
+        let svgOutput = document.getElementById("svg-output");
+        svgCode = await generateSVG(prompt);
+        console.log('svgCode: ', svgCode);
+        svgOutput.textContent = svgCode;
+        svgContainer.innerHTML = `<span class="loading loading-ring loading-xl"></span>`;
+        generateButton.disabled = true;
+	}
+    const generateButton = document.getElementById("generate-button");
+	if (generateButton) {
+		generateButton.addEventListener("click", handleSubmit);
+	}
+</script>
