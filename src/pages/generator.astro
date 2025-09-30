@@ -1,65 +1,68 @@
 ---
-// Logique côté serveur (optionnelle)
-const title = "Générateur SVG";
-import "../styles/global.css";
+// Import du layout existant
+import Layout from '../layouts/Layout.astro';
+import { ui, defaultLang } from '../i18n/ui.js';
+
+// Récupération de la langue actuelle
+const currentLanguage = Astro.cookies.get("language")?.value || defaultLang;
+const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : defaultLang) as keyof typeof ui;
 ---
 
-<!DOCTYPE html>
-<html lang="fr" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <style>
-        /* Contraindre la taille des SVG générés */
-        #svg-container svg {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        }
-    </style>
-</head>
-<body class="bg-gray-900">
-    <div class="h-screen flex flex-col">
-        <!-- Navigation horizontale en haut -->
-        <nav class="bg-gray-800 shadow-lg border-b border-gray-700">
-            <div class="px-6 py-3">
-                <div class="flex space-x-8">
-                    <a href="/" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Home</a>
-                    <a href="/generator" class="text-violet-400 font-medium border-b-2 border-violet-500 pb-1">Generator</a>
-                    <a href="/library" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Library</a>
-                </div>
-            </div>
-        </nav>
-        
-        <!-- Zone principale avec disposition moderne -->
-        <div class="flex-1 flex bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 p-4 gap-4 min-h-0">
+<Layout currentPage="generator">
+    <Fragment slot="head">
+        <style>
+            /* Contraindre la taille des SVG générés */
+            #svg-container svg {
+                max-width: 100%;
+                max-height: 100%;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+            }
+        </style>
+    </Fragment>
+    
+    <!-- Zone principale avec disposition moderne qui prend toute la hauteur -->
+    <div class="h-full flex bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 p-4 gap-4">
             
             <!-- Première div : Affichage du SVG (panneau gauche) -->
-            <div class="w-1/2 bg-gray-800 rounded-2xl shadow-xl border border-gray-700 flex flex-col">
+            <div class="w-1/2 h-full bg-gray-800 rounded-2xl shadow-xl border border-gray-700 flex flex-col">
                 <div class="px-4 py-2 border-b border-gray-700 bg-gray-750 rounded-t-2xl">
                     <h2 class="text-sm font-semibold text-violet-300 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
-                        Aperçu SVG
-                    </h2>
-                </div>
-                
-                <!-- Zone d'affichage SVG -->
-                <div class="flex-1 p-4 flex items-center justify-center bg-gray-800 min-h-0">
-                    <div id="svg-container" class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center overflow-hidden">
-                        <div class="text-center text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <p class="text-lg font-medium">Aucun SVG généré</p>
-                            <p class="text-sm text-gray-400 mt-2">Entrez une description et cliquez sur "Générer SVG"</p>
-                        </div>
-                    </div>
+                        {ui[locale].generator.preview}
+                            // Sauvegarde et gestion de la réponse
+                            const result = await saveSVG(params);
+                            if (result.success) {
+                                alert("SVG sauvegardé avec succès !");
+                    
+                                // Stocker l'ID du SVG sauvegardé pour les futures éditions
+                                if (result.id) {
+                                    document.getElementById('svg-id-input').value = result.id;
+                                    console.log('SVG ID stocké pour futures éditions:', result.id);
+                                }
+                    
+                                // Cacher le formulaire et réinitialiser les champs
+                                metadataForm.classList.add('hidden');
+                                document.getElementById('svg-name-input').value = '';
+                                document.getElementById('svg-creator-input').value = '';
+                                document.getElementById('svg-tags-input').value = '';
+                            } else {
+                                alert("Erreur lors de la sauvegarde : " + result.error);
+                            }
+                        };
+            
+                        // Gérer l'annulation
+                        document.getElementById('cancel-save-btn').onclick = () => {
+                            metadataForm.classList.add('hidden');
+                            document.getElementById('svg-name-input').value = '';
+                            document.getElementById('svg-creator-input').value = '';
+                            document.getElementById('svg-tags-input').value = '';
+                        };
+                    });
                 </div>
                 
                 <!-- Stats en bas -->
@@ -73,7 +76,7 @@ import "../styles/global.css";
             </div>
             
             <!-- Deuxième div : Chat + Zone de saisie (panneau droit) -->
-            <div class="w-1/2 bg-black rounded-2xl shadow-xl border border-gray-800 flex flex-col">
+            <div class="w-1/2 h-full bg-black rounded-2xl shadow-xl border border-gray-800 flex flex-col">
                 <!-- En-tête de la conversation -->
                 <div class="px-4 py-2 border-b border-gray-800 flex items-center justify-between rounded-t-2xl bg-gray-900">
                     <div class="flex items-center gap-2">
@@ -84,12 +87,40 @@ import "../styles/global.css";
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             </svg>
-                            Conversation
+                            {ui[locale].generator.conversation}
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <button id="copy-btn" class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Copy SVG</button>
-                        <button id="save-btn" class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors">Sauvegarder</button>
+                        <button id="copy-btn" class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">{ui[locale].generator.copy}</button>
+                        <button id="save-btn" class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors">{ui[locale].generator.save}</button>
+                    </div>
+                    
+                    <!-- Formulaire de métadonnées pour la sauvegarde -->
+                    <div id="metadata-form" class="mt-3 p-3 bg-gray-800 rounded-lg hidden">
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <input 
+                                id="svg-name-input" 
+                                type="text" 
+                                placeholder="Nom du SVG" 
+                                class="input input-xs bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
+                            />
+                            <input 
+                                id="svg-creator-input" 
+                                type="text" 
+                                placeholder="Créateur (optionnel)" 
+                                class="input input-xs bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
+                            />
+                            <input 
+                                id="svg-tags-input" 
+                                type="text" 
+                                placeholder="Tags séparés par des virgules" 
+                                class="input input-xs bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
+                            />
+                            <div class="flex gap-2 mt-1">
+                                <button id="confirm-save-btn" type="button" class="btn btn-xs btn-primary flex-1">Sauvegarder</button>
+                                <button id="cancel-save-btn" type="button" class="btn btn-xs btn-ghost flex-1">Annuler</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -101,8 +132,8 @@ import "../styles/global.css";
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
-                                <p class="text-sm font-medium">Aucune conversation</p>
-                                <p class="text-xs text-gray-400 mt-1">L'historique des échanges apparaîtra ici</p>
+                                <p class="text-sm font-medium">{ui[locale].generator.noConversation}</p>
+                                <p class="text-xs text-gray-400 mt-1">{ui[locale].generator.historyDesc}</p>
                             </div>
                         </div>
                     </div>
@@ -121,96 +152,28 @@ import "../styles/global.css";
                                 name="editPrompt" 
                                 type="text" 
                                 class="input flex-grow bg-gray-800 border-gray-600 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
-                                placeholder="Enter a prompt to edit the SVG..." 
+                                placeholder={ui[locale].generator.placeholder}
                             />
                             <button id="generate-button" class="btn btn-primary" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                 </svg>
-                                Générer
+                                {ui[locale].generator.generate}
                             </button>
                             <button id="edit-button" class="btn btn-secondary" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                 </svg>
-                                Edit
+                                {ui[locale].generator.edit}
                             </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-
-    </div>
-
-    <!-- Modal de sauvegarde -->
-    <div id="save-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4" style="display: none;">
-        <div class="bg-gray-800 rounded-2xl max-w-md w-full">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-white">Sauvegarder le SVG</h3>
-                    <button id="close-save-modal" class="text-gray-400 hover:text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-                
-                <form id="save-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Titre *</label>
-                        <input 
-                            type="text" 
-                            id="save-title"
-                            required
-                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                            placeholder="Mon SVG génial"
-                        />
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Créé par</label>
-                        <input 
-                            type="text" 
-                            id="save-author"
-                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                            placeholder="Votre nom (optionnel)"
-                        />
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Tags</label>
-                        <input 
-                            type="text" 
-                            id="save-tags"
-                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                            placeholder="logo, violet, design (optionnel)"
-                        />
-                    </div>
-                    
-                    <div class="flex gap-3 pt-4">
-                        <button 
-                            type="button" 
-                            id="cancel-save"
-                            class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-                        >
-                            Annuler
-                        </button>
-                        <button 
-                            type="submit"
-                            class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-                        >
-                            Sauvegarder
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-
-<script>
+    
+    <Fragment slot="scripts">
+        <script>
     //@ts-nocheck
     
     // Variables globales pour la sauvegarde
@@ -237,6 +200,45 @@ import "../styles/global.css";
         return data.svg; // Retourne l'objet complet comme avant
     }
 
+    // Fonction pour mettre à jour un SVG existant dans PocketBase
+    async function update(updatedData) {
+        const response = await fetch("/api/updateSVG", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData),
+        });
+        return response;
+    }
+
+    // Fonction pour mettre à jour manuellement un SVG (exemple d'utilisation)
+    async function updateSVGManually() {
+        const formData = new FormData(form);
+        
+        if (!formData.get("id")) {
+            alert("Aucun SVG � sauvegarder");
+            return;
+        }
+
+        try {
+            const response = await update({
+                id: formData.get("id"),
+                code_svg: currentSvgCode,
+                chat_history: JSON.stringify(promptList),
+            });
+            
+            const data = await response.json();
+
+            if (data.success) {
+                alert("SVG sauvegard� automatiquement");
+            } else {
+                alert("Erreur d'�dition" + ": " + (data.error || "Erreur inconnue"));
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour manuelle:', error);
+            alert("Erreur d'�dition" + ": " + error.message);
+        }
+    }
+
 
     
     // Fonction pour échapper le HTML
@@ -250,144 +252,106 @@ import "../styles/global.css";
 
 
 
-    // Gestion de la sauvegarde - système fonctionnel restauré
-    const saveBtn = document.getElementById("save-btn");
-    const saveModal = document.getElementById("save-modal");
-    const closeSaveModal = document.getElementById("close-save-modal");
-    const cancelSave = document.getElementById("cancel-save");
-    const saveForm = document.getElementById("save-form");
+    // Fonction utilitaire pour sauvegarder le SVG - Style prof
+    const saveButton = document.getElementById("save-btn");
 
-    if (saveBtn) {
-        saveBtn.addEventListener("click", () => {
-            if (currentSvgCode) {
-                document.getElementById("save-title").value = '';
-                document.getElementById("save-author").value = '';
-                document.getElementById("save-tags").value = '';
-                saveModal.style.display = 'flex';
-            } else {
-                alert("Aucun SVG à sauvegarder. Générez d'abord un SVG !");
-            }
+    async function saveSVG(params) {
+        // Envoi de la requête à notre endpoint
+        const res = await fetch("/api/saveSVG", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(params),
         });
+        return await res.json();
     }
 
-    if (closeSaveModal) {
-        closeSaveModal.addEventListener("click", () => {
-            saveModal.style.display = 'none';
-        });
-    }
-
-    if (cancelSave) {
-        cancelSave.addEventListener("click", () => {
-            saveModal.style.display = 'none';
-        });
-    }
-
-    if (saveForm) {
-        saveForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const title = document.getElementById("save-title").value.trim();
-            const author = document.getElementById("save-author").value.trim() || 'Anonyme';
-            const tags = document.getElementById("save-tags").value.trim();
-
-            if (!title) {
-                alert("Le titre est requis !");
+    // Gestionnaire d'événements pour le bouton de sauvegarde - Style prof
+    if (saveButton) {
+        saveButton.addEventListener("click", async () => {
+            if (!currentSvgCode) {
+                alert("Aucun SVG à sauvegarder");
                 return;
             }
 
-            try {
-                // Extraire le dernier prompt utilisateur pour un affichage propre
-                const lastUserPrompt = promptList.filter(msg => msg.role === 'user').pop();
-                const userPromptText = lastUserPrompt ? lastUserPrompt.content : currentPrompt || 'Prompt généré automatiquement';
-                
-                // Support des deux formats: ancien (title/prompt/svg_code) et nouveau (name/chat_history/code_svg)
-                const response = await fetch('/api/saveSVG', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        // Format du prof
-                        name: title,
-                        chat_history: userPromptText,
-                        code_svg: currentSvgCode,
-                        // Format ancien pour compatibilité
-                        title: title,
-                        prompt: userPromptText,
-                        svg_code: currentSvgCode,
-                        created_by: author,
-                        tags: tags
-                    }),
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    alert("SVG sauvegardé avec succès !");
-                    saveModal.style.display = 'none';
-                } else {
-                    alert("Erreur lors de la sauvegarde : " + (result.error || "Erreur inconnue"));
+            // Afficher le formulaire de métadonnées
+            const metadataForm = document.getElementById('metadata-form');
+            metadataForm.classList.remove('hidden');
+            
+            // Gérer la confirmation de sauvegarde
+            document.getElementById('confirm-save-btn').onclick = async () => {
+                const name = document.getElementById('svg-name-input').value.trim();
+                if (!name) {
+                    alert('Veuillez saisir un nom pour votre SVG');
+                    return;
                 }
-            } catch (error) {
-                console.error('Save error:', error);
-                alert("Erreur lors de la sauvegarde : " + error.message);
+                
+                const creator = document.getElementById('svg-creator-input').value.trim();
+                const tags = document.getElementById('svg-tags-input').value.trim();
+
+                console.log("Préparation de la sauvegarde :", JSON.stringify(currentSvgCode));
+                
+                // Préparation des données pour la sauvegarde
+                const params = {
+                    name: name,
+                    code_svg: currentSvgCode || "<svg></svg>", // SVG par défaut si vide
+                    chat_history: JSON.stringify(promptList), // Historique des échanges
+                    creator: creator || '', // Créateur optionnel
+                    tags: tags || '' // Tags optionnels
+                };
+            
+            // Sauvegarde et gestion de la réponse
+            const result = await saveSVG(params);
+            if (result.success) {
+                alert("SVG sauvegard� avec succ�s !");
+                
+                // Stocker l'ID du SVG sauvegardé pour les futures éditions
+                if (result.id) {
+                    document.getElementById('svg-id-input').value = result.id;
+                    console.log('SVG ID stocké pour futures éditions:', result.id);
+                }
+            } else {
+                alert("Erreur lors de la sauvegarde : " + result.error);
             }
         });
     }
 
 
 
-    // Écouteur d'événement pour le formulaire de soumission
-    form?.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Empêche le rechargement de la page
-        const formData = new FormData(form);
-        console.log(JSON.stringify(Object.fromEntries(formData)));
-
-        // Créez un objet pour le prompt de l'utilisateur
-        let prompt = {
-            role: 'user',
-            content: formData.get('editPrompt')
-        };
-
-        // Récupérez l'historique des messages
-        let history = [];
-        try {
-            const historyData = formData.get('history');
-            if (historyData && historyData !== '') {
-                history = JSON.parse(historyData);
-            }
-        } catch (e) {
-            console.log('No previous history or error parsing:', e);
-            history = [];
+    // Fonction pour générer un nouveau SVG (bouton Générer)
+    async function handleGenerate() {
+        const promptInput = document.getElementById('prompt-input');
+        const prompt = promptInput ? promptInput.value : "";
+        
+        if (!prompt.trim()) {
+            alert("Veuillez saisir une description");
+            return;
         }
         
-        // Ajoutez le nouveau prompt à l'historique
-        history.push(prompt);
-
-        // Réinitialisez le champ de saisie
-        document.getElementById('prompt-input').value = '';
-
-        // Affichez un indicateur de chargement
+        console.log("Génération : ", prompt);
+        
+        // Réinitialiser la liste des prompts pour une nouvelle génération
+        promptList.length = 0; 
+        promptList.push({ role: "user", content: prompt });
+        
+        // Afficher un spinner de chargement
         svgPreview.innerHTML = `<span class="loading loading-ring loading-xl"></span>`;
         
-        // Ajoutez le prompt à l'historique du chat
-        const userChatBubble = `
+        // Réinitialiser la conversation
+        chatHistory.innerHTML = `
             <div class="chat chat-start">
                 <div class="chat-bubble bg-primary text-primary-content">
-                    <pre class="text-xs whitespace-pre-wrap">${escapeHtml(prompt.content)}</pre>
+                    <pre class="text-xs whitespace-pre-wrap">${escapeHtml(prompt)}</pre>
                 </div>
                 <div class="chat-footer opacity-60 text-xs mt-1">user</div>
             </div>
         `;
         
-        // Si c'est le premier message, remplacer le placeholder
-        if (chatHistory.innerHTML.includes('Aucune conversation')) {
-            chatHistory.innerHTML = userChatBubble;
-        } else {
-            chatHistory.innerHTML += userChatBubble;
-        }
-
+        // Vider le champ de saisie
+        promptInput.value = '';
+        
         try {
-            // Appelez la fonction pour générer le SVG
-            let aiResponseObj = await generateSVG(history);
+            // Appeler la fonction pour générer le SVG
+            let aiResponseObj = await generateSVG(promptList);
             let aiResponse = aiResponseObj.content;
             
             // Nettoyer le contenu s'il contient des balises markdown
@@ -395,25 +359,23 @@ import "../styles/global.css";
                 aiResponse = aiResponse.replace(/```svg\s*/, '').replace(/```\s*$/, '');
             }
             
-            // Ajoutez la réponse de l'IA à l'historique
-            history.push({ role: 'assistant', content: aiResponse });
-
+            // Ajouter la réponse de l'IA à la liste des prompts
+            promptList.push({ role: 'assistant', content: aiResponse });
+            
             // Extraire le SVG de la réponse
             const svgMatch = aiResponse.match(/<svg[\s\S]*?<\/svg>/i);
             const svgCode = svgMatch ? svgMatch[0] : "";
-
-            console.log("aiResponse: ", aiResponse);
-            console.log("svgCode: ", svgCode);
             
-            // Mettez à jour l'affichage du SVG
+            console.log("Code SVG généré : ", svgCode);
+            
+            // Afficher le SVG généré
             svgPreview.innerHTML = svgCode;
-
+            
             // Sauvegarder pour les fonctions de copie/sauvegarde
             currentSvgCode = svgCode;
-            currentPrompt = prompt.content;
-            promptList = history; // Synchroniser avec l'ancien système
-
-            // Ajoutez le code SVG à l'historique du chat
+            currentPrompt = prompt;
+            
+            // Ajouter le code SVG à l'historique du chat
             const aiChatBubble = `
                 <div class="chat chat-end">
                     <div class="chat-bubble bg-secondary text-secondary-content">
@@ -424,10 +386,10 @@ import "../styles/global.css";
                 </div>
             `;
             chatHistory.innerHTML += aiChatBubble;
-
+            
             // Mettre à jour le champ caché history
-            document.getElementById('history-input').value = JSON.stringify(history);
-
+            document.getElementById('history-input').value = JSON.stringify(promptList);
+            
         } catch (error) {
             console.error('Erreur lors de la génération:', error);
             svgPreview.innerHTML = `
@@ -437,10 +399,148 @@ import "../styles/global.css";
                 </div>
             `;
         }
-
+        
         // Scroll vers le bas pour voir le dernier message
         chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    
+    // Fonction pour éditer le SVG existant (bouton Edit)
+    async function handleEdit() {
+        const promptInput = document.getElementById('prompt-input');
+        const prompt = promptInput ? promptInput.value : "";
+        
+        if (!prompt.trim()) {
+            alert("Veuillez saisir une modification");
+            return;
+        }
+        
+        if (promptList.length === 0) {
+            alert("Aucun SVG � �diter");
+            return;
+        }
+        
+        console.log("Édition : ", prompt);
+        
+        // Ajout du prompt de l'utilisateur à la liste existante
+        promptList.push({ role: "user", content: prompt });
+        
+        // Afficher un spinner de chargement
+        svgPreview.innerHTML = `<span class="loading loading-ring loading-xl"></span>`;
+        
+        // Ajouter le prompt utilisateur au chat
+        const userChatBubble = `
+            <div class="chat chat-start">
+                <div class="chat-bubble bg-primary text-primary-content">
+                    <pre class="text-xs whitespace-pre-wrap">${escapeHtml(prompt)}</pre>
+                </div>
+                <div class="chat-footer opacity-60 text-xs mt-1">user</div>
+            </div>
+        `;
+        chatHistory.innerHTML += userChatBubble;
+        
+        // Vider le champ de saisie
+        promptInput.value = '';
+        
+        try {
+            // Appeler la fonction pour générer le SVG avec l'historique complet
+            let aiResponseObj = await generateSVG(promptList);
+            let aiResponse = aiResponseObj.content;
+            
+            // Nettoyer le contenu s'il contient des balises markdown
+            if (aiResponse.includes('```svg')) {
+                aiResponse = aiResponse.replace(/```svg\s*/, '').replace(/```\s*$/, '');
+            }
+            
+            // Extraire le SVG de la réponse
+            const svgMatch = aiResponse.match(/<svg[\s\S]*?<\/svg>/i);
+            const svgCode = svgMatch ? svgMatch[0] : "";
+            
+            console.log("Code SVG modifié : ", svgCode);
+            
+            // Ajouter la réponse de l'IA à la liste des prompts
+            promptList.push({ role: 'assistant', content: aiResponse });
+            
+            // Afficher le SVG généré
+            svgPreview.innerHTML = svgCode;
+            
+            // Sauvegarder pour les fonctions de copie/sauvegarde
+            currentSvgCode = svgCode;
+            currentPrompt = prompt;
+            
+            // Ajouter le code SVG à l'historique du chat
+            const aiChatBubble = `
+                <div class="chat chat-end">
+                    <div class="chat-bubble bg-secondary text-secondary-content">
+                        <div class="text-xs mb-2">Code SVG modifié:</div>
+                        <pre class="text-xs whitespace-pre-wrap overflow-x-auto max-w-full">${escapeHtml(svgCode)}</pre>
+                    </div>
+                    <div class="chat-footer opacity-60 text-xs mt-1">assistant</div>
+                </div>
+            `;
+            chatHistory.innerHTML += aiChatBubble;
+            
+            // Mettre à jour le champ caché history
+            document.getElementById('history-input').value = JSON.stringify(promptList);
+            
+            // Si nous éditons un SVG sauvegardé (avec ID), le mettre à jour automatiquement
+            const svgId = document.getElementById('svg-id-input').value;
+            if (svgId && svgId.trim() !== '') {
+                try {
+                    console.log('Mise à jour du SVG sauvegardé avec ID:', svgId);
+                    const response = await update({
+                        id: svgId,
+                        code_svg: svgCode,
+                        chat_history: JSON.stringify(promptList)
+                    });
+                    const updateResult = await response.json();
+                    
+                    if (updateResult.success) {
+                        console.log('SVG mis à jour avec succès dans PocketBase');
+                        // Optionnel : afficher une notification discrète
+                        const notification = document.createElement('div');
+                        notification.textContent = 'SVG sauvegardé automatiquement';
+                        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg text-sm z-50';
+                        document.body.appendChild(notification);
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 3000);
+                    } else {
+                        console.error('Erreur lors de la mise à jour:', updateResult.error);
+                    }
+                } catch (updateError) {
+                    console.error('Erreur lors de la mise à jour automatique:', updateError);
+                }
+            }
+            
+        } catch (error) {
+            console.error('Erreur lors de l\'édition:', error);
+            svgPreview.innerHTML = `
+                <div class="text-center text-red-500">
+                    <p class="text-sm font-medium">Erreur d'édition</p>
+                    <p class="text-xs mt-1">${error.message}</p>
+                </div>
+            `;
+        }
+        
+        // Scroll vers le bas pour voir le dernier message
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+        
+        console.log("Historique des prompts : ", promptList);
+    }
+
+    // Écouteur d'événement pour le bouton Générer (soumission du formulaire)
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Empêche le rechargement de la page
+        await handleGenerate();
     });
+
+    // Gestion du bouton Edit séparément
+    const editButton = document.getElementById('edit-button');
+    if (editButton) {
+        editButton.addEventListener('click', async () => {
+            await handleEdit();
+        });
+    }
 
     // Fonctionnalité de copie du code SVG
     const copyBtn = document.getElementById("copy-btn");
@@ -451,7 +551,7 @@ import "../styles/global.css";
                     await navigator.clipboard.writeText(currentSvgCode);
                     // Feedback visuel temporaire
                     const originalText = copyBtn.textContent;
-                    copyBtn.textContent = "Copié !";
+                    copyBtn.textContent = "Copi� !";
                     copyBtn.style.backgroundColor = "#10b981"; // vert
                     setTimeout(() => {
                         copyBtn.textContent = originalText;
@@ -469,15 +569,18 @@ import "../styles/global.css";
                     
                     // Feedback visuel
                     const originalText = copyBtn.textContent;
-                    copyBtn.textContent = "Copié !";
+                    copyBtn.textContent = "Copi� !";
                     setTimeout(() => {
                         copyBtn.textContent = originalText;
                     }, 2000);
                 }
             } else {
-                alert("Aucun SVG à copier. Générez d'abord un SVG !");
+                alert("Aucun SVG � copier");
             }
         });
     }
 
-</script>
+        </script>
+    </Fragment>
+</Layout>
+

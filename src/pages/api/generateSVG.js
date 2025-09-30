@@ -25,7 +25,7 @@ export const POST = async ({ request }) => {
     
     // Appel à l'API pour générer le code SVG en utilisant le modèle spécifié
     const chatCompletion = await client.chat.completions.create({
-        model: "openai/gpt-oss-20b:free", // Nom du modèle à utiliser
+        model: "deepseek/deepseek-chat-v3.1:free", // Nom du modèle à utiliser
         messages: [SystemMessage, ...messages] // Messages envoyés au modèle, incluant le message système et l'historique des messages
     });
     

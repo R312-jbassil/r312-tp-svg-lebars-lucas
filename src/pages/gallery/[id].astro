@@ -2,6 +2,11 @@
 import Layout from "../../layouts/Layout.astro";
 import pb from "../../utils/pb";
 import { Collections } from "../../utils/pocketbase-types";
+import { ui, defaultLang } from '../../i18n/ui.js';
+
+// Récupération de la langue actuelle
+const currentLanguage = Astro.cookies.get("language")?.value || defaultLang;
+const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : defaultLang) as keyof typeof ui;
 
 const id = Astro.params.id;
 if (!id) {
@@ -12,20 +17,8 @@ console.log("Gallery - SVG data:", Object.keys(svg));
 console.log("Gallery - SVG updated field:", svg.updated);
 ---
 
-<Layout title={`SVG - ${svg.name}`}>
-  <!-- Navigation -->
-  <nav class="bg-gray-800 shadow-lg border-b border-gray-700">
-    <div class="px-6 py-3">
-      <div class="flex space-x-8">
-        <a href="/" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Home</a>
-        <a href="/generator" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Generator</a>
-        <a href="/library" class="text-gray-300 hover:text-violet-400 font-medium transition-colors">Library</a>
-        <a href="/gallery" class="text-violet-400 font-medium border-b-2 border-violet-500 pb-1">Gallery</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 p-6">
+<Layout title={`SVG - ${svg.name}`} currentPage="library">
+  <main class="h-full bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 p-6 overflow-y-auto">
     <div class="max-w-4xl mx-auto">
       <!-- Bouton retour -->
       <div class="mb-6">
@@ -33,7 +26,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
-          Retour à la bibliothèque
+          {ui[locale].gallery.backToLibrary}
         </a>
       </div>
 
@@ -43,7 +36,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
           <h1 class="text-3xl font-bold text-white">{svg.name}</h1>
           {svg.creator && (
             <span class="text-sm text-violet-400 bg-violet-900/30 px-3 py-1 rounded-full">
-              Créé par {svg.creator}
+              {ui[locale].gallery.createdBy} {svg.creator}
             </span>
           )}
         </div>
@@ -59,7 +52,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
         )}
         
         <div class="text-sm text-gray-400">
-          <p>Créé le : {new Date(svg.updated).toLocaleDateString('fr-FR', { 
+          <p>{ui[locale].gallery.createdOn} {new Date(svg.updated).toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { 
             year: 'numeric', 
             month: 'long', 
             day: 'numeric',
@@ -77,7 +70,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
             </svg>
-            Aperçu SVG
+            {ui[locale].gallery.preview}
           </h2>
           
           <div class="bg-gray-900 border border-gray-600 rounded-lg p-6 flex items-center justify-center min-h-[300px]" set:html={svg.code_svg}>
@@ -88,13 +81,13 @@ console.log("Gallery - SVG updated field:", svg.updated);
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
               </svg>
-              Copier le code
+              {ui[locale].gallery.copyCode}
             </button>
             <button id="download-svg-btn" class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
               </svg>
-              Télécharger
+              {ui[locale].gallery.download}
             </button>
           </div>
         </div>
@@ -105,7 +98,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
             </svg>
-            Historique des échanges
+            {ui[locale].gallery.chatHistory}
           </h2>
           
           <div class="space-y-4 max-h-96 overflow-y-auto" set:html={(() => {
@@ -127,7 +120,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
                     const bgClass = isUser ? 'bg-violet-900/30 ml-4' : 'bg-gray-700 mr-4';
                     const iconColor = isUser ? 'text-violet-400' : 'text-green-400';
                     const labelColor = isUser ? 'text-violet-300' : 'text-green-300';
-                    const label = isUser ? 'Utilisateur' : 'Assistant IA';
+                    const label = isUser ? userLabel : assistantLabel;
                     
                     return `
                       <div class="p-3 rounded-lg ${bgClass}">
@@ -142,7 +135,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
                         </div>
                         <div class="text-sm text-gray-300">
                           ${msg.role === 'assistant' && msg.content.includes('<svg') 
-                            ? '<div class="bg-gray-800 p-2 rounded text-xs font-mono overflow-x-auto">Code SVG généré</div>'
+                            ? '<div class="bg-gray-800 p-2 rounded text-xs font-mono overflow-x-auto">' + svgGeneratedLabel + '</div>'
                             : `<p>${msg.content}</p>`
                           }
                         </div>
@@ -157,7 +150,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        <span class="text-sm font-medium text-violet-300">Prompt</span>
+                        <span class="text-sm font-medium text-violet-300">${ui[locale].gallery.promptUser}</span>
                       </div>
                       <div class="text-sm text-gray-300">
                         <p>${chatHistory}</p>
@@ -173,7 +166,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                       </svg>
-                      <span class="text-sm font-medium text-violet-300">Prompt utilisateur</span>
+                      <span class="text-sm font-medium text-violet-300">${ui[locale].gallery.promptUser}</span>
                     </div>
                     <div class="text-sm text-gray-300">
                       <p>${chatHistory}</p>
@@ -189,7 +182,14 @@ console.log("Gallery - SVG updated field:", svg.updated);
   </main>
 </Layout>
 
-<script define:vars={{ svgCode: svg.code_svg, svgName: svg.name }}>
+<script define:vars={{ 
+  svgCode: svg.code_svg, 
+  svgName: svg.name, 
+  copiedText: "Copié !",
+  userLabel: ui[locale].gallery.user,
+  assistantLabel: ui[locale].gallery.assistant,
+  svgGeneratedLabel: ui[locale].gallery.svgGenerated
+}}>
   // Copier le code SVG
   const copySvgBtn = document.getElementById('copy-svg-btn');
   if (copySvgBtn) {
@@ -197,7 +197,7 @@ console.log("Gallery - SVG updated field:", svg.updated);
       try {
         await navigator.clipboard.writeText(svgCode);
         const originalText = copySvgBtn.textContent;
-        copySvgBtn.textContent = 'Copié !';
+        copySvgBtn.textContent = copiedText;
         copySvgBtn.style.backgroundColor = '#10b981';
         setTimeout(() => {
           copySvgBtn.textContent = originalText;
