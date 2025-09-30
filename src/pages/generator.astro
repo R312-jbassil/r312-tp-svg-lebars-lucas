@@ -10,6 +10,16 @@ import "../styles/global.css";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
+    <style>
+        /* Contraindre la taille des SVG générés */
+        #svg-container svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body class="bg-gray-900">
     <div class="h-screen flex flex-col">
@@ -41,7 +51,7 @@ import "../styles/global.css";
                 
                 <!-- Zone d'affichage SVG -->
                 <div class="flex-1 p-4 flex items-center justify-center bg-gray-800 min-h-0">
-                    <div id="svg-container" class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center">
+                    <div id="svg-container" class="bg-gray-900 rounded-lg shadow-inner border border-gray-600 p-4 w-full h-full flex items-center justify-center overflow-hidden">
                         <div class="text-center text-gray-500">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -62,8 +72,9 @@ import "../styles/global.css";
                 </div>
             </div>
             
-            <!-- Deuxième div : Affichage du code généré (panneau droit) -->
+            <!-- Deuxième div : Chat + Zone de saisie (panneau droit) -->
             <div class="w-1/2 bg-black rounded-2xl shadow-xl border border-gray-800 flex flex-col">
+                <!-- En-tête de la conversation -->
                 <div class="px-4 py-2 border-b border-gray-800 flex items-center justify-between rounded-t-2xl bg-gray-900">
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 bg-red-500 rounded-full"></div>
@@ -71,60 +82,65 @@ import "../styles/global.css";
                         <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                         <span class="ml-3 text-gray-400 text-xs flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             </svg>
-                            Code généré
+                            Conversation
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <button id="copy-btn" class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Copy</button>
+                        <button id="copy-btn" class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">Copy SVG</button>
                         <button id="save-btn" class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors">Sauvegarder</button>
                     </div>
                 </div>
                 
-                <!-- Zone de code -->
+                <!-- Zone de conversation (prend la majeure partie de l'espace) -->
                 <div class="flex-1 p-4 min-h-0">
-                    <div id="svg-output" class="text-xs text-gray-300 leading-tight h-full flex items-center justify-center">
-                        <div class="text-center text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                            </svg>
-                            <p class="text-sm font-medium">Aucun code généré</p>
-                            <p class="text-xs text-gray-400 mt-1">Le code SVG apparaîtra ici</p>
+                    <div id="chat-history" class="flex flex-col gap-4 w-full h-full overflow-y-auto mb-4">
+                        <div class="text-center text-gray-500 flex items-center justify-center h-full">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                <p class="text-sm font-medium">Aucune conversation</p>
+                                <p class="text-xs text-gray-400 mt-1">L'historique des échanges apparaîtra ici</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Troisième div : Textarea + Button pour le prompt (barre en bas) -->
-        <div class="bg-gray-800 border-t border-gray-700 shadow-xl p-4">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex items-start gap-4">
-                    <div class="flex items-center gap-2 pt-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-gray-300">Prompt :</span>
+                
+                <!-- Formulaire de chat en bas du panneau droit -->
+                <form id="input-prompt-form" class="border-t border-gray-800 bg-gray-900 p-4 rounded-b-2xl" autocomplete="off">
+                    <!-- Champs cachés pour l'historique et l'ID (pour compatibilité future) -->
+                    <input type="hidden" name="history" id="history-input" value="" />
+                    <input type="hidden" name="id" id="svg-id-input" value="" />
+                    
+                    <div class="flex flex-col gap-2 w-full">
+                        <div class="flex items-center gap-2">
+                            <input 
+                                id="prompt-input" 
+                                name="editPrompt" 
+                                type="text" 
+                                class="input flex-grow bg-gray-800 border-gray-600 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
+                                placeholder="Enter a prompt to edit the SVG..." 
+                            />
+                            <button id="generate-button" class="btn btn-primary" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Générer
+                            </button>
+                            <button id="edit-button" class="btn btn-secondary" type="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                Edit
+                            </button>
+                        </div>
                     </div>
-                    
-                    <!-- Textarea pour le prompt -->
-                    <textarea 
-                        id="user-prompt"
-                        class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none h-16" 
-                        placeholder="Décrivez le SVG que vous souhaitez générer : un logo avec un cercle violet, un triangle et du texte..."
-                    ></textarea>
-                    
-                    <!-- Bouton de génération -->
-                    <button id="generate-button" class="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-violet-500/25 flex items-center gap-2 h-16">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                        Générer SVG
-                    </button>
-                </div>
+                </form>
             </div>
         </div>
+
     </div>
 
     <!-- Modal de sauvegarde -->
@@ -200,85 +216,28 @@ import "../styles/global.css";
     // Variables globales pour la sauvegarde
     let currentSvgCode = '';
     let currentPrompt = '';
+    
+    // Liste pour l'historique des échanges
+    let promptList = [];
+    
+    // Références aux éléments du DOM
+    const form = document.getElementById('input-prompt-form');
+    const svgPreview = document.getElementById('svg-container');
+    const chatHistory = document.getElementById('chat-history');
 	
-	async function generateSVG(prompt) {
-		console.log('Generating SVG for prompt:', prompt);
-		const res = await fetch('/api/generateSVG', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ prompt }),
-		});
-		const data = await res.json();
-		return data.svg;
-	}
+    // Fonction pour générer le SVG à partir du prompt
+    async function generateSVG(messages) {
+        console.log('Generating SVG for messages:', messages);
+        const res = await fetch('/api/generateSVG', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: messages }),
+        });
+        const data = await res.json();
+        return data.svg; // Retourne l'objet complet comme avant
+    }
 
-	async function handleSubmit() {
-        let prompt = "";
-        let svgCode = "";
-        const promptElement = document.getElementById("user-prompt");
-        prompt = promptElement ? promptElement.value : "";
-        console.log('submitted: ', prompt);
-        
-        const svgContainer = document.getElementById("svg-container");
-        const svgOutput = document.getElementById("svg-output");
-        const generateButton = document.getElementById("generate-button");
-        
-        // Afficher un loader pendant la génération
-        svgContainer.innerHTML = `
-            <div class="text-center text-violet-400">
-                <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-violet-500 border-t-transparent"></div>
-                <p class="mt-4 text-lg font-medium">Génération en cours...</p>
-                <p class="text-sm text-gray-400">Création de votre SVG</p>
-            </div>
-        `;
-        
-        svgOutput.innerHTML = `
-            <div class="text-center text-violet-400">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-violet-500 border-t-transparent"></div>
-                <p class="mt-2 text-sm">Génération du code...</p>
-            </div>
-        `;
-        
-        generateButton.disabled = true;
-        
-        try {
-            svgCode = await generateSVG(prompt);
-            console.log('svgCode: ', svgCode);
-            
-            // Sauvegarder dans les variables globales pour la sauvegarde
-            currentSvgCode = svgCode;
-            currentPrompt = prompt;
-            
-            // Afficher le SVG généré
-            svgContainer.innerHTML = svgCode;
-            
-            // Afficher le code avec coloration syntaxique
-            svgOutput.innerHTML = `<pre class="text-xs text-gray-300 leading-tight h-full overflow-auto"><code>${escapeHtml(svgCode)}</code></pre>`;
-            
-        } catch (error) {
-            console.error('Error generating SVG:', error);
-            
-            // Afficher l'erreur
-            svgContainer.innerHTML = `
-                <div class="text-center text-red-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    </svg>
-                    <p class="text-lg font-medium">Erreur de génération</p>
-                    <p class="text-sm text-gray-400 mt-2">Veuillez réessayer</p>
-                </div>
-            `;
-            
-            svgOutput.innerHTML = `
-                <div class="text-center text-red-400">
-                    <p class="text-sm font-medium">Erreur lors de la génération</p>
-                    <p class="text-xs text-gray-400 mt-1">${error.message}</p>
-                </div>
-            `;
-        } finally {
-            generateButton.disabled = false;
-        }
-	}
+
     
     // Fonction pour échapper le HTML
     function escapeHtml(text) {
@@ -287,13 +246,11 @@ import "../styles/global.css";
         return div.innerHTML;
     }
 
-    // Event listeners
-    const generateButton = document.getElementById("generate-button");
-    if (generateButton) {
-        generateButton.addEventListener("click", handleSubmit);
-    }
 
-    // Gestion de la sauvegarde
+
+
+
+    // Gestion de la sauvegarde - système fonctionnel restauré
     const saveBtn = document.getElementById("save-btn");
     const saveModal = document.getElementById("save-modal");
     const closeSaveModal = document.getElementById("close-save-modal");
@@ -339,12 +296,22 @@ import "../styles/global.css";
             }
 
             try {
+                // Extraire le dernier prompt utilisateur pour un affichage propre
+                const lastUserPrompt = promptList.filter(msg => msg.role === 'user').pop();
+                const userPromptText = lastUserPrompt ? lastUserPrompt.content : currentPrompt || 'Prompt généré automatiquement';
+                
+                // Support des deux formats: ancien (title/prompt/svg_code) et nouveau (name/chat_history/code_svg)
                 const response = await fetch('/api/saveSVG', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        // Format du prof
+                        name: title,
+                        chat_history: userPromptText,
+                        code_svg: currentSvgCode,
+                        // Format ancien pour compatibilité
                         title: title,
-                        prompt: currentPrompt,
+                        prompt: userPromptText,
                         svg_code: currentSvgCode,
                         created_by: author,
                         tags: tags
@@ -357,11 +324,158 @@ import "../styles/global.css";
                     alert("SVG sauvegardé avec succès !");
                     saveModal.style.display = 'none';
                 } else {
-                    alert("Erreur lors de la sauvegarde : " + result.error);
+                    alert("Erreur lors de la sauvegarde : " + (result.error || "Erreur inconnue"));
                 }
             } catch (error) {
                 console.error('Save error:', error);
                 alert("Erreur lors de la sauvegarde : " + error.message);
+            }
+        });
+    }
+
+
+
+    // Écouteur d'événement pour le formulaire de soumission
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Empêche le rechargement de la page
+        const formData = new FormData(form);
+        console.log(JSON.stringify(Object.fromEntries(formData)));
+
+        // Créez un objet pour le prompt de l'utilisateur
+        let prompt = {
+            role: 'user',
+            content: formData.get('editPrompt')
+        };
+
+        // Récupérez l'historique des messages
+        let history = [];
+        try {
+            const historyData = formData.get('history');
+            if (historyData && historyData !== '') {
+                history = JSON.parse(historyData);
+            }
+        } catch (e) {
+            console.log('No previous history or error parsing:', e);
+            history = [];
+        }
+        
+        // Ajoutez le nouveau prompt à l'historique
+        history.push(prompt);
+
+        // Réinitialisez le champ de saisie
+        document.getElementById('prompt-input').value = '';
+
+        // Affichez un indicateur de chargement
+        svgPreview.innerHTML = `<span class="loading loading-ring loading-xl"></span>`;
+        
+        // Ajoutez le prompt à l'historique du chat
+        const userChatBubble = `
+            <div class="chat chat-start">
+                <div class="chat-bubble bg-primary text-primary-content">
+                    <pre class="text-xs whitespace-pre-wrap">${escapeHtml(prompt.content)}</pre>
+                </div>
+                <div class="chat-footer opacity-60 text-xs mt-1">user</div>
+            </div>
+        `;
+        
+        // Si c'est le premier message, remplacer le placeholder
+        if (chatHistory.innerHTML.includes('Aucune conversation')) {
+            chatHistory.innerHTML = userChatBubble;
+        } else {
+            chatHistory.innerHTML += userChatBubble;
+        }
+
+        try {
+            // Appelez la fonction pour générer le SVG
+            let aiResponseObj = await generateSVG(history);
+            let aiResponse = aiResponseObj.content;
+            
+            // Nettoyer le contenu s'il contient des balises markdown
+            if (aiResponse.includes('```svg')) {
+                aiResponse = aiResponse.replace(/```svg\s*/, '').replace(/```\s*$/, '');
+            }
+            
+            // Ajoutez la réponse de l'IA à l'historique
+            history.push({ role: 'assistant', content: aiResponse });
+
+            // Extraire le SVG de la réponse
+            const svgMatch = aiResponse.match(/<svg[\s\S]*?<\/svg>/i);
+            const svgCode = svgMatch ? svgMatch[0] : "";
+
+            console.log("aiResponse: ", aiResponse);
+            console.log("svgCode: ", svgCode);
+            
+            // Mettez à jour l'affichage du SVG
+            svgPreview.innerHTML = svgCode;
+
+            // Sauvegarder pour les fonctions de copie/sauvegarde
+            currentSvgCode = svgCode;
+            currentPrompt = prompt.content;
+            promptList = history; // Synchroniser avec l'ancien système
+
+            // Ajoutez le code SVG à l'historique du chat
+            const aiChatBubble = `
+                <div class="chat chat-end">
+                    <div class="chat-bubble bg-secondary text-secondary-content">
+                        <div class="text-xs mb-2">Code SVG généré:</div>
+                        <pre class="text-xs whitespace-pre-wrap overflow-x-auto max-w-full">${escapeHtml(svgCode)}</pre>
+                    </div>
+                    <div class="chat-footer opacity-60 text-xs mt-1">assistant</div>
+                </div>
+            `;
+            chatHistory.innerHTML += aiChatBubble;
+
+            // Mettre à jour le champ caché history
+            document.getElementById('history-input').value = JSON.stringify(history);
+
+        } catch (error) {
+            console.error('Erreur lors de la génération:', error);
+            svgPreview.innerHTML = `
+                <div class="text-center text-red-500">
+                    <p class="text-sm font-medium">Erreur de génération</p>
+                    <p class="text-xs mt-1">${error.message}</p>
+                </div>
+            `;
+        }
+
+        // Scroll vers le bas pour voir le dernier message
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    });
+
+    // Fonctionnalité de copie du code SVG
+    const copyBtn = document.getElementById("copy-btn");
+    if (copyBtn) {
+        copyBtn.addEventListener("click", async () => {
+            if (currentSvgCode) {
+                try {
+                    await navigator.clipboard.writeText(currentSvgCode);
+                    // Feedback visuel temporaire
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = "Copié !";
+                    copyBtn.style.backgroundColor = "#10b981"; // vert
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.backgroundColor = ""; // retour au style original
+                    }, 2000);
+                } catch (err) {
+                    console.error('Erreur lors de la copie:', err);
+                    // Fallback pour les anciens navigateurs
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentSvgCode;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Feedback visuel
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = "Copié !";
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                }
+            } else {
+                alert("Aucun SVG à copier. Générez d'abord un SVG !");
             }
         });
     }
