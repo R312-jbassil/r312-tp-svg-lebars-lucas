@@ -258,6 +258,13 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
                 return;
             }
 
+            // Récupérer l'utilisateur depuis le localStorage
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user || !user.id) {
+                alert("Erreur : utilisateur non trouvé. Veuillez vous reconnecter.");
+                return;
+            }
+
             // Afficher le formulaire de métadonnées
             const metadataForm = document.getElementById('metadata-form');
             metadataForm.classList.remove('hidden');
@@ -275,19 +282,18 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
 
                 console.log("Préparation de la sauvegarde :", JSON.stringify(currentSvgCode));
                 
-                // Préparation des données pour la sauvegarde
+                // Préparation des données pour la sauvegarde avec l'ID utilisateur
                 const params = {
                     name: name,
                     code_svg: currentSvgCode || "<svg></svg>", // SVG par défaut si vide
                     chat_history: JSON.stringify(promptList), // Historique des échanges
-                    creator: creator || '', // Créateur optionnel
-                    tags: tags || '' // Tags optionnels
+                    user: user.id // ID de l'utilisateur connecté
                 };
             
             // Sauvegarde et gestion de la réponse
             const result = await saveSVG(params);
             if (result.success) {
-                alert("SVG sauvegard� avec succ�s !");
+                alert("SVG sauvegardé avec succès !");
                 
                     // Stocker l'ID du SVG sauvegardé pour les futures éditions
                     if (result.id) {

@@ -7,12 +7,13 @@ export const POST = async ({ request }) => {
         const data = await request.json();
         console.log("Received data to save:", data); // Style prof
         
-        const { title, prompt, svg_code, created_by, tags, name, chat_history, code_svg } = data;
+        const { title, prompt, svg_code, created_by, tags, name, chat_history, code_svg, nom, user } = data;
         
         // Support both old format (title, prompt, svg_code) and new format (name, chat_history, code_svg)
-        const svgName = name || title;
+        const svgName = name || nom || title;
         let svgChatHistory = chat_history || prompt;
         const svgCode = code_svg || svg_code;
+        const userId = user;
         
         // Traiter le chat_history pour respecter la limite de 1000 caractères
         if (typeof svgChatHistory !== 'string') {
@@ -31,11 +32,11 @@ export const POST = async ({ request }) => {
         }
         
         // Validation des données
-        if (!svgName || !svgChatHistory || !svgCode) {
-            console.log("Validation failed:", { svgName, svgChatHistory: !!svgChatHistory, svgCode: !!svgCode });
+        if (!svgName || !svgChatHistory || !svgCode || !userId) {
+            console.log("Validation failed:", { svgName, svgChatHistory: !!svgChatHistory, svgCode: !!svgCode, userId });
             return new Response(JSON.stringify({ 
                 success: false,
-                error: "Nom, chat_history et code SVG sont requis" 
+                error: "Nom, chat_history, code SVG et utilisateur sont requis" 
             }), {
                 status: 400,
                 headers: { "Content-Type": "application/json" },
@@ -46,7 +47,8 @@ export const POST = async ({ request }) => {
         const recordData = {
             name: svgName.trim(),
             chat_history: svgChatHistory.trim(),
-            code_svg: svgCode.trim()
+            code_svg: svgCode.trim(),
+            user: userId
         };
 
         // Ajouter les champs optionnels seulement s'ils sont fournis

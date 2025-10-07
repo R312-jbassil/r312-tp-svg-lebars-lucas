@@ -15,6 +15,35 @@ if (!id) {
 const svg = await pb.collection(Collections.Svg).getOne(id);
 console.log("Gallery - SVG data:", Object.keys(svg));
 console.log("Gallery - SVG updated field:", svg.updated);
+
+// Parse du chat_history - Version simplifiée
+let chatHistory = [];
+let userPrompt = "Prompt non disponible";
+
+function extractPrompt(raw) {
+  let val = raw;
+  // Déstringifie plusieurs fois si besoin
+  for (let i = 0; i < 2; i++) {
+    if (typeof val === 'string') {
+      try {
+        val = JSON.parse(val);
+      } catch { break; }
+    }
+  }
+  if (Array.isArray(val)) {
+    const userMsg = val.find(msg => msg.role === 'user');
+    if (userMsg && userMsg.content) return userMsg.content;
+  }
+  // Si tout échoue, retourne le début du champ brut
+  if (typeof raw === 'string') {
+    return raw.length > 100 ? raw.substring(0, 100) + '...' : raw;
+  }
+  return 'Prompt non disponible';
+}
+
+if (svg.chat_history) {
+  userPrompt = extractPrompt(svg.chat_history);
+}
 ---
 
 <Layout title={`SVG - ${svg.name}`} currentPage="library">
@@ -101,80 +130,34 @@ console.log("Gallery - SVG updated field:", svg.updated);
             {ui[locale].gallery.chatHistory}
           </h2>
           
-          <div class="space-y-4 max-h-96 overflow-y-auto" set:html={(() => {
-              let chatHistory = svg.chat_history || '';
-              
-              // Essayer de parser comme JSON si c'est le format ancien
-              if ((chatHistory.startsWith('[') || chatHistory.startsWith('{') || chatHistory.startsWith('"[')) && chatHistory.includes('"role"')) {
-                try {
-                  // Nettoyer les guillemets externes si nécessaires
-                  if (chatHistory.startsWith('"') && chatHistory.endsWith('"')) {
-                    chatHistory = chatHistory.slice(1, -1);
-                  }
-                  const parsed = JSON.parse(chatHistory);
-                  const messages = Array.isArray(parsed) ? parsed : [parsed];
-                  
-                  // Rendu des messages avec Astro
-                  return messages.map((msg, index) => {
-                    const isUser = msg.role === 'user';
-                    const bgClass = isUser ? 'bg-violet-900/30 ml-4' : 'bg-gray-700 mr-4';
-                    const iconColor = isUser ? 'text-violet-400' : 'text-green-400';
-                    const labelColor = isUser ? 'text-violet-300' : 'text-green-300';
-                    const label = isUser ? '${ui[locale].gallery.user}' : '${ui[locale].gallery.assistant}';
-                    
-                    return `
-                      <div class="p-3 rounded-lg ${bgClass}">
-                        <div class="flex items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 ${iconColor}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            ${isUser 
-                              ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>'
-                              : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>'
-                            }
-                          </svg>
-                          <span class="text-sm font-medium ${labelColor}">${label}</span>
-                        </div>
-                        <div class="text-sm text-gray-300">
-                          ${msg.role === 'assistant' && msg.content.includes('<svg') 
-                            ? '<div class="bg-gray-800 p-2 rounded text-xs font-mono overflow-x-auto">${ui[locale].gallery.svgGenerated}</div>'
-                            : `<p>${msg.content}</p>`
-                          }
-                        </div>
-                      </div>
-                    `;
-                  }).join('');
-                } catch {
-                  // Si le parsing échoue, afficher comme texte simple
-                  return `
-                    <div class="p-3 rounded-lg bg-violet-900/30">
-                      <div class="flex items-center mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-violet-300">${ui[locale].gallery.promptUser}</span>
-                      </div>
-                      <div class="text-sm text-gray-300">
-                        <p>${chatHistory}</p>
-                      </div>
-                    </div>
-                  `;
-                }
-              } else {
-                // Format simple - juste le prompt
-                return `
-                  <div class="p-3 rounded-lg bg-violet-900/30">
-                    <div class="flex items-center mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                      </svg>
-                      <span class="text-sm font-medium text-violet-300">${ui[locale].gallery.promptUser}</span>
-                    </div>
-                    <div class="text-sm text-gray-300">
-                      <p>${chatHistory}</p>
-                    </div>
-                  </div>
-                `;
-              }
-            })()}>
+          <div class="space-y-4 max-h-96 overflow-y-auto">
+            <!-- Prompt utilisateur -->
+            <div class="p-4 rounded-lg bg-violet-900/30 border border-violet-600/30">
+              <div class="flex items-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="text-sm font-medium text-violet-300">Prompt utilisateur</span>
+              </div>
+              <div class="text-gray-300">
+                <p class="text-lg italic">"{userPrompt}"</p>
+              </div>
+            </div>
+
+            <!-- Réponse assistant -->
+            <div class="p-4 rounded-lg bg-gray-700 border border-gray-600">
+              <div class="flex items-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+                <span class="text-sm font-medium text-green-300">Assistant</span>
+              </div>
+              <div class="text-gray-300">
+                <div class="bg-gray-800 p-3 rounded text-sm">
+                  <span class="text-green-400">✓</span> SVG généré avec succès
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -22,9 +22,10 @@ export const onRequest = async (context, next) => {
         }
     }
 
-    // Pour les routes API, on exige l'authentification sauf pour /api/login
+    // Pour les routes API, on exige l'authentification sauf pour /api/login et /api/signup
     if (context.url.pathname.startsWith('/api/')) {
-        if (!context.locals.user && context.url.pathname !== '/api/login') {
+        const apiAllowed = ['/api/login', '/api/signup'];
+        if (!context.locals.user && !apiAllowed.includes(context.url.pathname)) {
             // Si l'utilisateur n'est pas connecté, on retourne une erreur 401 (non autorisé)
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
         }
@@ -33,8 +34,10 @@ export const onRequest = async (context, next) => {
 
     // Pour les autres pages, si l'utilisateur n'est pas connecté, on le redirige vers /login
     if (!context.locals.user) {
-        if (context.url.pathname !== '/login' && context.url.pathname !== '/')
+        const allowed = ['/login', '/', '/signup', '/signup4'];
+        if (!allowed.includes(context.url.pathname)) {
             return Response.redirect(new URL('/login', context.url), 303);
+        }
     }
     
     // Continue le traitement normal pour les autres cas

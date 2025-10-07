@@ -33,7 +33,7 @@ export const onRequest = async (context, next) => {
 
     // Pour les autres pages, si l'utilisateur n'est pas connecté, on le redirige vers /login
     if (!context.locals.user) {
-        if (context.url.pathname !== '/login' && context.url.pathname !== '/')
+        if (context.url.pathname !== '/login' && context.url.pathname !== '/' && context.url.pathname !== '/library')
             return Response.redirect(new URL('/login', context.url), 303);
     }
     

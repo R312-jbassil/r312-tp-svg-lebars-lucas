@@ -1,24 +1,18 @@
+
 ---
 import "../styles/global.css";
 import { ui, defaultLang } from '../i18n/ui.js';
-
 // Props du layout
 interface Props {
-  title?: string;
-  currentPage?: string;
+	title?: string;
+	currentPage?: string;
 }
-
 const { title = "Générateur SVG", currentPage = "" } = Astro.props;
-
-// Récupération de la langue actuelle (cookie ou défaut)
 const currentLanguage = Astro.cookies.get("language")?.value || defaultLang;
-
-// Validation et définition de la locale - assurer que c'est soit 'fr' soit 'en'
 const validLocales = ['fr', 'en'] as const;
 type ValidLocale = typeof validLocales[number];
 const locale: ValidLocale = validLocales.includes(currentLanguage as ValidLocale) ? currentLanguage as ValidLocale : defaultLang;
-
-// Déterminer le titre basé sur la page actuelle ou utiliser le titre fourni
+const user = Astro.locals.user;
 let pageTitle = title;
 if (currentPage === "home") pageTitle = ui[locale].index.title;
 else if (currentPage === "generator") pageTitle = ui[locale].generator.title;
@@ -34,7 +28,6 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<link href="https://cdn.jsdelivr.net/npm/daisyui@3.8.0/dist/full.css" rel="stylesheet" type="text/css" />
-		<script src="https://cdn.tailwindcss.com"></script>
 		<slot name="head" />
 	</head>
 	<body class="h-full bg-gray-900">
@@ -50,7 +43,7 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 							>
 								{ui[locale].nav.home}
 							</a>
-							{Astro.locals.user && (
+							{user && (
 								<>
 									<a 
 										href="/generator" 
@@ -70,23 +63,31 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 						
 						<div class="flex items-center space-x-4">
 							<!-- Informations utilisateur -->
-							{Astro.locals.user ? (
-								<div class="flex items-center space-x-3">
-									<span class="text-sm text-gray-300">
-										{ui[locale].nav.hello}, <span class="text-violet-400">{Astro.locals.user.email}</span>
-									</span>
-									<form method="POST" action="/api/logout" class="m-0 p-0 ml-4">
-										<button type="submit" class="btn btn-primary">Logout</button>
-									</form>
-								</div>
-							) : (
+						{user ? (
+							<div class="flex items-center space-x-3">
+								<span class="text-sm text-gray-300">
+									{ui[locale].nav.hello}, <span class="text-violet-400">{user.email}</span>
+								</span>
+								<form method="POST" action="/api/logout" class="m-0 p-0 ml-4">
+									<button type="submit" class="btn btn-primary">Logout</button>
+								</form>
+							</div>
+						) : (
+							<>
 								<a 
 									href="/login" 
 									class="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md transition-colors"
 								>
 									{ui[locale].nav.login}
 								</a>
-							)}
+																				<a 
+																					href="/signup" 
+																					class="text-sm bg-gray-700 hover:bg-violet-700 text-white px-4 py-2 rounded-md transition-colors border border-violet-600 ml-2"
+																				>
+																					Créer un compte
+																				</a>
+							</>
+						)}
 							
 							<!-- Sélecteur de langue -->
 							<form method="POST" action="/api/setLanguage" class="flex items-center">

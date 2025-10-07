@@ -1,21 +1,59 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { ui, defaultLang } from '../i18n/ui.js';
+import pb from '../utils/pb.js';
+import { Collections } from '../utils/pocketbase-types.js';
 
 // Récupération de la langue actuelle
 const currentLanguage = Astro.cookies.get("language")?.value || defaultLang;
 const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : defaultLang) as keyof typeof ui;
 
-let svgs = [];
+// Récupère l'utilisateur connecté - Approche du professeur
+const user = Astro.locals.user;
+
+// Vérification obligatoire de l'authentification
+if (!user) {
+  return Astro.redirect("/login");
+}
+
+console.log("Gallery: User authenticated:", user.id, user.email);
+
+// Récupération des SVGs selon l'approche du professeur
+let svgList = [];
+let errorMessage = "";
+
 try {
-  const res = await fetch("http://127.0.0.1:8090/api/collections/svg_creations/records?page=1&perPage=50");
-  const data = await res.json();
-  svgs = data.items;
-  console.log("Library: fetched", svgs.length, "SVGs");
-  console.log("First SVG:", svgs[0] ? Object.keys(svgs[0]) : "No SVGs");
+  console.log("Gallery: Fetching SVGs for user", user.id);
+  
+  // D'abord, essayons de récupérer tous les SVGs pour voir la structure
+  const allSvgs = await pb.collection(Collections.Svg).getFullList({ perPage: 1 });
+  if (allSvgs.length > 0) {
+    console.log("Gallery: Available fields:", Object.keys(allSvgs[0]));
+  }
+  
+  // Maintenant récupérer les SVGs de l'utilisateur (sans tri)
+  svgList = await pb
+    .collection(Collections.Svg)
+    .getFullList({
+      filter: `user = "${user.id}"`, // Filtre pour n'afficher que les SVGs de l'utilisateur
+    });
+  
+  console.log("Gallery: Successfully fetched", svgList.length, "SVGs for user");
+  
+  if (svgList.length > 0) {
+    console.log("Gallery: First SVG sample:", {
+      id: svgList[0].id,
+      name: svgList[0].name || svgList[0].nom, // Vérifier les deux
+      hasUser: !!svgList[0].user,
+      userMatch: svgList[0].user === user.id,
+      allFields: Object.keys(svgList[0])
+    });
+  }
+  
 } catch (error) {
-  console.error("Error fetching SVGs:", error);
-  svgs = [];
+  console.error("Gallery: Error fetching SVGs:", error);
+  errorMessage = `Erreur lors de la récupération: ${(error as any)?.message || 'Erreur inconnue'}`;
+  svgList = [];
 }
 ---
 
@@ -37,38 +75,64 @@ try {
     <div class="max-w-7xl mx-auto">
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-white mb-2 text-center">{ui[locale].gallery.title}</h1>
-        <p class="text-center text-gray-300">{ui[locale].gallery.subtitle} ({svgs.length} {ui[locale].gallery.found})</p>
+        <p class="text-center text-gray-300">{ui[locale].gallery.subtitle} ({svgList.length} {ui[locale].gallery.found})</p>
+        {errorMessage && (
+          <div class="mt-4 p-4 bg-red-900/30 border border-red-600 rounded-lg">
+            <p class="text-red-200 text-sm text-center">{errorMessage}</p>
+          </div>
+        )}
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {svgs.map((svg: any) => (
-          <div class="bg-gray-800 rounded-xl p-4 border border-gray-700 shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col h-96">
-            <!-- Titre du SVG -->
-            <h2 class="text-lg font-bold text-white mb-4 text-center leading-tight h-14 flex items-center justify-center" title={svg.name}>
-              {svg.name.length > 40 ? svg.name.substring(0, 37) + '...' : svg.name}
-            </h2>
-            
-            <!-- Aperçu du SVG avec dimensions fixes -->
-            <div class="bg-gray-900 border border-gray-600 rounded-lg p-4 mb-4 flex items-center justify-center flex-1 overflow-hidden">
-              <div class="w-full h-full flex items-center justify-center" style="max-width: 200px; max-height: 200px;">
-                <div class="svg-container w-full h-full flex items-center justify-center" set:html={svg.code_svg}></div>
-              </div>
-            </div>
-            
-            <!-- Bouton pour voir les détails -->
+      {svgList.length === 0 ? (
+        <div class="text-center py-16">
+          <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 shadow-xl max-w-md mx-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <h3 class="text-xl font-semibold text-white mb-2">Aucun SVG trouvé</h3>
+            <p class="text-gray-400 mb-6">Vous n'avez pas encore créé de SVG. Commencez dès maintenant !</p>
             <a 
-              href={`/gallery/${svg.id}`}
-              class="inline-flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-all duration-200 transform hover:scale-105 mt-auto"
+              href="/generator"
+              class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
               </svg>
-              {ui[locale].gallery.viewDetails}
+              Créer un SVG
             </a>
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {svgList.map((svg: any) => (
+            <div class="bg-gray-800 rounded-xl p-4 border border-gray-700 shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col h-96">
+              <!-- Titre du SVG -->
+              <h2 class="text-lg font-bold text-white mb-4 text-center leading-tight h-14 flex items-center justify-center" title={svg.name}>
+                {svg.name.length > 40 ? svg.name.substring(0, 37) + '...' : svg.name}
+              </h2>
+              
+              <!-- Aperçu du SVG avec dimensions fixes -->
+              <div class="bg-gray-900 border border-gray-600 rounded-lg p-4 mb-4 flex items-center justify-center flex-1 overflow-hidden">
+                <div class="w-full h-full flex items-center justify-center" style="max-width: 200px; max-height: 200px;">
+                  <div class="svg-container w-full h-full flex items-center justify-center" set:html={svg.code_svg}></div>
+                </div>
+              </div>
+              
+              <!-- Bouton pour voir les détails -->
+              <a 
+                href={`/gallery/${svg.id}`}
+                class="inline-flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-all duration-200 transform hover:scale-105 mt-auto"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                {ui[locale].gallery.viewDetails}
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   </main>
 </Layout>
