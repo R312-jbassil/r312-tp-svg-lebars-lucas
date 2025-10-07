@@ -12,6 +12,9 @@ export const ui = {
       generator: 'Generator',
       gallery: 'Gallery',
       language: 'Language',
+      login: 'Login',
+      logout: 'Logout',
+      hello: 'Hello',
     },
     index: {
         title: 'Welcome to SVG Generator',
@@ -62,6 +65,9 @@ export const ui = {
       generator: 'Générateur',
       gallery: 'Galerie',
       language: 'Langue',
+      login: 'Connexion',
+      logout: 'Déconnexion',
+      hello: 'Bonjour',
     },
     index: {
         title: 'Bienvenue sur le générateur SVG',

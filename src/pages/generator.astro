@@ -34,35 +34,20 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
                         {ui[locale].generator.preview}
-                            // Sauvegarde et gestion de la réponse
-                            const result = await saveSVG(params);
-                            if (result.success) {
-                                alert("SVG sauvegardé avec succès !");
-                    
-                                // Stocker l'ID du SVG sauvegardé pour les futures éditions
-                                if (result.id) {
-                                    document.getElementById('svg-id-input').value = result.id;
-                                    console.log('SVG ID stocké pour futures éditions:', result.id);
-                                }
-                    
-                                // Cacher le formulaire et réinitialiser les champs
-                                metadataForm.classList.add('hidden');
-                                document.getElementById('svg-name-input').value = '';
-                                document.getElementById('svg-creator-input').value = '';
-                                document.getElementById('svg-tags-input').value = '';
-                            } else {
-                                alert("Erreur lors de la sauvegarde : " + result.error);
-                            }
-                        };
-            
-                        // Gérer l'annulation
-                        document.getElementById('cancel-save-btn').onclick = () => {
-                            metadataForm.classList.add('hidden');
-                            document.getElementById('svg-name-input').value = '';
-                            document.getElementById('svg-creator-input').value = '';
-                            document.getElementById('svg-tags-input').value = '';
-                        };
-                    });
+                    </h2>
+                </div>
+                
+                <!-- Zone d'affichage du SVG (prend la majeure partie de l'espace) -->
+                <div class="flex-1 p-6 flex items-center justify-center min-h-0">
+                    <div id="svg-container" class="w-full h-full flex items-center justify-center bg-gray-900 rounded-xl border border-gray-700">
+                        <div class="text-center text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-lg font-medium">{ui[locale].generator.noSvg}</p>
+                            <p class="text-sm text-gray-400 mt-2">{ui[locale].generator.description}</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Stats en bas -->
@@ -304,14 +289,29 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
             if (result.success) {
                 alert("SVG sauvegard� avec succ�s !");
                 
-                // Stocker l'ID du SVG sauvegardé pour les futures éditions
-                if (result.id) {
-                    document.getElementById('svg-id-input').value = result.id;
-                    console.log('SVG ID stocké pour futures éditions:', result.id);
+                    // Stocker l'ID du SVG sauvegardé pour les futures éditions
+                    if (result.id) {
+                        document.getElementById('svg-id-input').value = result.id;
+                        console.log('SVG ID stocké pour futures éditions:', result.id);
+                    }
+                    
+                    // Cacher le formulaire et réinitialiser les champs
+                    metadataForm.classList.add('hidden');
+                    document.getElementById('svg-name-input').value = '';
+                    document.getElementById('svg-creator-input').value = '';
+                    document.getElementById('svg-tags-input').value = '';
+                } else {
+                    alert("Erreur lors de la sauvegarde : " + result.error);
                 }
-            } else {
-                alert("Erreur lors de la sauvegarde : " + result.error);
-            }
+            };
+            
+            // Gérer l'annulation
+            document.getElementById('cancel-save-btn').onclick = () => {
+                metadataForm.classList.add('hidden');
+                document.getElementById('svg-name-input').value = '';
+                document.getElementById('svg-creator-input').value = '';
+                document.getElementById('svg-tags-input').value = '';
+            };
         });
     }
 

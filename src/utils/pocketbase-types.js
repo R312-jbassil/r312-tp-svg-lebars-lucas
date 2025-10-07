@@ -4,6 +4,7 @@
 
 export const Collections = {
 	Svg: "svg_creations",
+	Users: "users",
 };
 
 // Types pour les enregistrements (structure pour référence)

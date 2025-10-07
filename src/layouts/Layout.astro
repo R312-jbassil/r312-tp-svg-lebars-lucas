@@ -14,8 +14,9 @@ const { title = "Générateur SVG", currentPage = "" } = Astro.props;
 const currentLanguage = Astro.cookies.get("language")?.value || defaultLang;
 
 // Validation et définition de la locale - assurer que c'est soit 'fr' soit 'en'
-const validLocales = ['fr', 'en'];
-const locale = validLocales.includes(currentLanguage) ? currentLanguage : defaultLang;
+const validLocales = ['fr', 'en'] as const;
+type ValidLocale = typeof validLocales[number];
+const locale: ValidLocale = validLocales.includes(currentLanguage as ValidLocale) ? currentLanguage as ValidLocale : defaultLang;
 console.log('Layout - currentLanguage:', currentLanguage, 'locale:', locale, 'ui keys:', Object.keys(ui));
 
 // Déterminer le titre basé sur la page actuelle ou utiliser le titre fourni
@@ -33,6 +34,8 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@3.8.0/dist/full.css" rel="stylesheet" type="text/css" />
+		<script src="https://cdn.tailwindcss.com"></script>
 		<slot name="head" />
 	</head>
 	<body class="h-full bg-gray-900">
@@ -48,33 +51,58 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 							>
 								{ui[locale].nav.home}
 							</a>
-							<a 
-								href="/generator" 
-								class={`font-medium transition-colors ${currentPage === 'generator' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
-							>
-								{ui[locale].nav.generator}
-							</a>
-							<a 
-								href="/library" 
-								class={`font-medium transition-colors ${currentPage === 'library' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
-							>
-								{ui[locale].nav.gallery}
-							</a>
+							{Astro.locals.user && (
+								<>
+									<a 
+										href="/generator" 
+										class={`font-medium transition-colors ${currentPage === 'generator' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
+									>
+										{ui[locale].nav.generator}
+									</a>
+									<a 
+										href="/library" 
+										class={`font-medium transition-colors ${currentPage === 'library' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
+									>
+										{ui[locale].nav.gallery}
+									</a>
+								</>
+							)}
 						</div>
 						
-						<!-- Sélecteur de langue -->
-						<form method="POST" action="/api/setLanguage" class="flex items-center">
-							<input type="hidden" name="returnUrl" value={Astro.url.pathname} />
-							<select 
-								name="language" 
-								class="select select-sm bg-gray-700 border-gray-600 text-gray-200 focus:border-violet-500 focus:ring-violet-500" 
-								onchange="this.form.submit()"
-							>
-								<option disabled selected={!currentLanguage}>{ui[locale].nav.language}</option>
-								<option value="en" selected={currentLanguage === "en"}>🇬🇧 English</option>
-								<option value="fr" selected={currentLanguage === "fr"}>🇫🇷 Français</option>
-							</select>
-						</form>
+						<div class="flex items-center space-x-4">
+							<!-- Informations utilisateur -->
+							{Astro.locals.user ? (
+								<div class="flex items-center space-x-3">
+									<span class="text-sm text-gray-300">
+										{ui[locale].nav.hello}, <span class="text-violet-400">{Astro.locals.user.email}</span>
+									</span>
+									<form method="POST" action="/api/logout" class="m-0 p-0 ml-4">
+										<button type="submit" class="btn btn-primary">Logout</button>
+									</form>
+								</div>
+							) : (
+								<a 
+									href="/login" 
+									class="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md transition-colors"
+								>
+									{ui[locale].nav.login}
+								</a>
+							)}
+							
+							<!-- Sélecteur de langue -->
+							<form method="POST" action="/api/setLanguage" class="flex items-center">
+								<input type="hidden" name="returnUrl" value={Astro.url.pathname} />
+								<select 
+									name="language" 
+									class="select select-sm bg-gray-700 border-gray-600 text-gray-200 focus:border-violet-500 focus:ring-violet-500" 
+									onchange="this.form.submit()"
+								>
+									<option disabled selected={!currentLanguage}>{ui[locale].nav.language}</option>
+									<option value="en" selected={currentLanguage === "en"}>🇬🇧 English</option>
+									<option value="fr" selected={currentLanguage === "fr"}>🇫🇷 Français</option>
+								</select>
+							</form>
+						</div>
 					</div>
 				</div>
 			</nav>
