@@ -1,4 +1,4 @@
-import pb from "../src/utils/pb.js";
+import pb from "./utils/pb.js";
 
 export const onRequest = async (context, next) => {
     console.log('Middleware - URL:', context.url.pathname);

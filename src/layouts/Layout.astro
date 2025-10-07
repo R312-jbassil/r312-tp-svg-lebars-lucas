@@ -17,7 +17,6 @@ const currentLanguage = Astro.cookies.get("language")?.value || defaultLang;
 const validLocales = ['fr', 'en'] as const;
 type ValidLocale = typeof validLocales[number];
 const locale: ValidLocale = validLocales.includes(currentLanguage as ValidLocale) ? currentLanguage as ValidLocale : defaultLang;
-console.log('Layout - currentLanguage:', currentLanguage, 'locale:', locale, 'ui keys:', Object.keys(ui));
 
 // Déterminer le titre basé sur la page actuelle ou utiliser le titre fourni
 let pageTitle = title;

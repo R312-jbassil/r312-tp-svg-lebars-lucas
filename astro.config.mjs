@@ -13,5 +13,5 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  adapter: netlify()
+  adapter: process.env.NODE_ENV === 'production' ? netlify() : undefined
 });
