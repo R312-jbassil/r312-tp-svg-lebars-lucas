@@ -15,11 +15,21 @@ export const ui = {
       login: 'Login',
       logout: 'Logout',
       hello: 'Hello',
+      theme: 'Theme',
+      chooseTheme: 'Choose a theme'
     },
     index: {
         title: 'Welcome to SVG Generator',
         description: 'Create and render SVGs from prompts.',
         button: 'Go to SVG Generator',
+        features: {
+            ai: 'Advanced AI',
+            aiDesc: 'SVG generation with Multiple AI models',
+            interface: 'Intuitive Interface', 
+            interfaceDesc: 'Modern and easy-to-use design',
+            export: 'Save & Export',
+            exportDesc: 'Manage and download your creations'
+        }
     },
     generator: {
         title: 'SVG Generator',
@@ -40,6 +50,7 @@ export const ui = {
         edit: 'Edit',
         copy: 'Copy SVG',
         save: 'Save',
+        modelLabel: 'AI Model',
     },
     gallery: {
         title: 'SVG Gallery',
@@ -68,11 +79,21 @@ export const ui = {
       login: 'Connexion',
       logout: 'Déconnexion',
       hello: 'Bonjour',
+      theme: 'Thème',
+      chooseTheme: 'Choisir un thème'
     },
     index: {
         title: 'Bienvenue sur le générateur SVG',
         description: 'Créez et affichez des SVG à partir d\'invites.',
         button: 'Aller au générateur SVG',
+        features: {
+            ai: 'IA Avancée',
+            aiDesc: 'Génération de SVG avec plusieurs modèles d\'IA',
+            interface: 'Interface Intuitive',
+            interfaceDesc: 'Design moderne et facile à utiliser',
+            export: 'Sauvegarde & Export',
+            exportDesc: 'Gérez et téléchargez vos créations'
+        }
     },
     generator: {
         title: 'Générateur SVG',
@@ -93,6 +114,7 @@ export const ui = {
         edit: 'Éditer',
         copy: 'Copier SVG',
         save: 'Sauvegarder',
+        modelLabel: 'Modèle IA',
     },
     gallery: {
         title: 'Galerie SVG',

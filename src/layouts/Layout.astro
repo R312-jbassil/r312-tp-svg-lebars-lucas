@@ -20,7 +20,7 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 ---
 
 <!doctype html>
-<html lang={locale} data-theme="dark" class="h-full">
+<html lang={locale} data-theme="luxury" class="h-full" id="html-root">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -28,81 +28,193 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<link href="https://cdn.jsdelivr.net/npm/daisyui@3.8.0/dist/full.css" rel="stylesheet" type="text/css" />
+		
+		<style>
+			/* Amélioration du sélecteur de thème */
+			.theme-selector {
+				transition: all 0.2s ease-in-out;
+			}
+			
+			.theme-selector:hover {
+				transform: translateX(4px);
+				background-color: hsl(var(--b2));
+			}
+			
+			.theme-selector.active {
+				background-color: hsl(var(--p));
+				color: hsl(var(--pc));
+				font-weight: 600;
+			}
+			
+			/* Menu title styling */
+			.menu-title span {
+				font-weight: 600;
+				color: hsl(var(--bc));
+				font-size: 0.75rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			
+			/* Responsive typography */
+			@media (max-width: 640px) {
+				.text-5xl { font-size: 2.5rem !important; }
+				.text-4xl { font-size: 2rem !important; }
+				.text-3xl { font-size: 1.5rem !important; }
+				.text-2xl { font-size: 1.25rem !important; }
+				.text-xl { font-size: 1.1rem !important; }
+				
+				/* Hero responsive */
+				.hero-content h1 { font-size: 2rem !important; }
+				.hero-content p { font-size: 1rem !important; }
+				
+				/* Card responsive */
+				.card-title { font-size: 1.1rem !important; }
+				.card-body { padding: 1rem !important; }
+				
+				/* Stats responsive */
+				.stat-title { font-size: 0.8rem !important; }
+				.stat-value { font-size: 1.5rem !important; }
+				.stat-desc { font-size: 0.75rem !important; }
+			}
+			
+			@media (max-width: 768px) {
+				/* Navigation responsive */
+				.navbar { padding: 0.5rem 1rem; }
+				.navbar-start .btn { padding: 0.5rem; }
+				
+				/* Cards responsive */
+				.card { margin: 0.5rem 0; }
+				.stats { grid-template-columns: repeat(2, 1fr) !important; }
+				
+				/* Hero responsive */
+				.hero { padding: 2rem 1rem; }
+				
+				/* Generator form responsive */
+				.form-control { margin-bottom: 1rem; }
+			}
+			
+			@media (min-width: 1024px) {
+				/* Desktop improvements */
+				.container { max-width: 1200px; }
+				.hero-content { max-width: 800px; }
+			}
+			
+			/* Animation improvements */
+			.btn {
+				transition: all 0.2s ease-in-out;
+			}
+			
+			.btn:hover {
+				transform: translateY(-1px);
+				box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+			}
+			
+			.card {
+				transition: all 0.2s ease-in-out;
+			}
+			
+			.card:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+			}
+			
+			/* Dropdown improvements */
+			.dropdown-content {
+				backdrop-filter: blur(10px);
+				border: 1px solid hsl(var(--b2));
+			}
+		</style>
+		
 		<slot name="head" />
 	</head>
-	<body class="h-full bg-gray-900">
-		<div class="h-full flex flex-col min-h-0">
+	<body class="min-h-screen bg-base-100 text-base-content">
+		<div class="min-h-screen flex flex-col">
 			<!-- Navigation horizontale en haut -->
-			<nav class="bg-gray-800 shadow-lg border-b border-gray-700">
-				<div class="px-6 py-3">
-					<div class="flex justify-between items-center">
-						<div class="flex space-x-8">
-							<a 
-								href="/" 
-								class={`font-medium transition-colors ${currentPage === 'home' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
-							>
-								{ui[locale].nav.home}
-							</a>
-							{user && (
-								<>
-									<a 
-										href="/generator" 
-										class={`font-medium transition-colors ${currentPage === 'generator' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
-									>
-										{ui[locale].nav.generator}
-									</a>
-									<a 
-										href="/library" 
-										class={`font-medium transition-colors ${currentPage === 'library' ? 'text-violet-400 border-b-2 border-violet-500 pb-1' : 'text-gray-300 hover:text-violet-400'}`}
-									>
-										{ui[locale].nav.gallery}
-									</a>
-								</>
-							)}
-						</div>
+			<nav class="navbar bg-base-200 shadow-lg border-b border-base-300">
+				<div class="navbar-start">
+					<div class="flex space-x-4">
+						<a 
+							href="/" 
+							class={`btn btn-ghost ${currentPage === 'home' ? 'btn-active' : ''}`}
+						>
+							{ui[locale].nav.home}
+						</a>
+						{user && (
+							<>
+								<a 
+									href="/generator" 
+									class={`btn btn-ghost ${currentPage === 'generator' ? 'btn-active' : ''}`}
+								>
+									{ui[locale].nav.generator}
+								</a>
+								<a 
+									href="/library" 
+									class={`btn btn-ghost ${currentPage === 'library' ? 'btn-active' : ''}`}
+								>
+									{ui[locale].nav.gallery}
+								</a>
+							</>
+						)}
+					</div>
+				</div>
+				
+				<div class="navbar-end">
+					<div class="flex items-center gap-2">
 						
-						<div class="flex items-center space-x-4">
-							<!-- Informations utilisateur -->
+						<!-- Informations utilisateur -->
 						{user ? (
-							<div class="flex items-center space-x-3">
-								<span class="text-sm text-gray-300">
-									{ui[locale].nav.hello}, <span class="text-violet-400">{user.email}</span>
-								</span>
-								<form method="POST" action="/api/logout" class="m-0 p-0 ml-4">
-									<button type="submit" class="btn btn-primary">Logout</button>
+							<div class="flex items-center gap-3">
+								<div class="text-sm">
+									<span class="text-base-content">{ui[locale].nav.hello}, </span>
+									<span class="font-semibold text-primary">{user.email}</span>
+								</div>
+								<form method="POST" action="/api/logout">
+									<button type="submit" class="btn btn-primary btn-sm">Logout</button>
 								</form>
 							</div>
 						) : (
-							<>
-								<a 
-									href="/login" 
-									class="text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md transition-colors"
-								>
+							<div class="flex gap-2">
+								<a href="/login" class="btn btn-primary btn-sm">
 									{ui[locale].nav.login}
 								</a>
-																				<a 
-																					href="/signup" 
-																					class="text-sm bg-gray-700 hover:bg-violet-700 text-white px-4 py-2 rounded-md transition-colors border border-violet-600 ml-2"
-																				>
-																					Créer un compte
-																				</a>
-							</>
-						)}
+								<a href="/signup" class="btn btn-outline btn-sm">
+									Créer un compte
+								</a>
+							</div>
+						)}							<!-- Sélecteur de thème -->
+							<div class="dropdown dropdown-end">
+								<label tabindex="0" class="btn btn-sm btn-outline gap-2">
+									<span>{ui[locale].nav.theme}</span>
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+									</svg>
+								</label>
+								<ul tabindex="0" class="dropdown-content menu p-2 shadow-2xl bg-base-100 rounded-box w-52 border border-base-200">
+									<li class="menu-title"><span>{ui[locale].nav.chooseTheme}</span></li>
+									<li><a data-theme="light" class="theme-selector">Light</a></li>
+									<li><a data-theme="dark" class="theme-selector">Dark</a></li>
+									<li><a data-theme="cupcake" class="theme-selector">Cupcake</a></li>
+									<li><a data-theme="cyberpunk" class="theme-selector">Cyberpunk</a></li>
+									<li><a data-theme="valentine" class="theme-selector">Valentine</a></li>
+									<li><a data-theme="halloween" class="theme-selector">Halloween</a></li>
+									<li><a data-theme="forest" class="theme-selector">Forest</a></li>
+									<li><a data-theme="luxury" class="theme-selector">Luxury</a></li>
+								</ul>
+							</div>
 							
-							<!-- Sélecteur de langue -->
-							<form method="POST" action="/api/setLanguage" class="flex items-center">
-								<input type="hidden" name="returnUrl" value={Astro.url.pathname} />
-								<select 
-									name="language" 
-									class="select select-sm bg-gray-700 border-gray-600 text-gray-200 focus:border-violet-500 focus:ring-violet-500" 
-									onchange="this.form.submit()"
-								>
-									<option disabled selected={!currentLanguage}>{ui[locale].nav.language}</option>
-									<option value="en" selected={currentLanguage === "en"}>🇬🇧 English</option>
-									<option value="fr" selected={currentLanguage === "fr"}>🇫🇷 Français</option>
-								</select>
-							</form>
-						</div>
+						<!-- Sélecteur de langue -->
+						<form method="POST" action="/api/setLanguage">
+							<input type="hidden" name="returnUrl" value={Astro.url.pathname} />
+							<select 
+								name="language" 
+								class="select select-sm select-bordered" 
+								onchange="this.form.submit()"
+							>
+								<option disabled selected={!currentLanguage}>{ui[locale].nav.language}</option>
+								<option value="en" selected={currentLanguage === "en"}>🇬🇧 English</option>
+								<option value="fr" selected={currentLanguage === "fr"}>🇫🇷 Français</option>
+							</select>
+						</form>
 					</div>
 				</div>
 			</nav>
@@ -116,6 +228,52 @@ else if (currentPage === "library") pageTitle = ui[locale].gallery.title;
 		<!-- Scripts partagés -->
 		<slot name="scripts" />
 		
+		<!-- Script pour le changement de thème -->
+		<script>
+			// Charger le thème sauvegardé au démarrage
+			const savedTheme = localStorage.getItem('theme') || 'luxury';
+			const htmlRoot = document.getElementById('html-root');
+			if (htmlRoot) htmlRoot.setAttribute('data-theme', savedTheme);
+			
+			// Gestionnaire pour les sélecteurs de thème
+			document.addEventListener('DOMContentLoaded', () => {
+				const themeSelectors = document.querySelectorAll('.theme-selector');
+				
+				// Fonction pour mettre à jour le thème actif
+				const updateActiveTheme = (activeTheme: string) => {
+					themeSelectors.forEach(sel => {
+						sel.classList.remove('active');
+						if (sel.getAttribute('data-theme') === activeTheme) {
+							sel.classList.add('active');
+						}
+					});
+				};
+				
+				// Marquer le thème initial comme actif
+				updateActiveTheme(savedTheme);
+				
+				themeSelectors.forEach(selector => {
+					selector.addEventListener('click', (e) => {
+						e.preventDefault();
+						const target = e.target as HTMLElement;
+						const theme = target?.getAttribute('data-theme');
+						const htmlRoot = document.getElementById('html-root');
+						if (theme && htmlRoot) {
+							htmlRoot.setAttribute('data-theme', theme);
+							localStorage.setItem('theme', theme);
+							updateActiveTheme(theme);
+						}
+						
+						// Fermer le dropdown avec animation
+						const dropdown = target?.closest('.dropdown') as HTMLElement;
+						if (dropdown) {
+							const label = dropdown.querySelector('label');
+							if (label) label.blur();
+						}
+					});
+				});
+			});
+		</script>
 
 	</body>
 </html>

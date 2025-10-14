@@ -11,59 +11,125 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
 <Layout currentPage="generator">
     <Fragment slot="head">
         <style>
-            /* Contraindre la taille des SVG générés */
+            /* Amélioration de l'affichage des SVG générés */
+            #svg-container {
+                background: hsl(var(--b1));
+            }
+            
             #svg-container svg {
-                max-width: 100%;
-                max-height: 100%;
+                max-width: 95%;
+                max-height: 95%;
                 width: auto;
                 height: auto;
                 object-fit: contain;
             }
+            
+            /* Thème personnalisé avec animations */
+            @keyframes gradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            
+            .animated-gradient {
+                background: linear-gradient(-45deg, #1f2937, #4c1d95, #7c3aed, #3730a3);
+                background-size: 400% 400%;
+                animation: gradient 15s ease infinite;
+            }
+            
+            /* Amélioration des boutons */
+            .btn-enhanced {
+                transition: all 0.3s ease;
+                transform: translateY(0px);
+            }
+            
+            .btn-enhanced:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            }
+            
+            /* Responsive amélioré */
+            @media (max-width: 1279px) {
+                .mobile-stack {
+                    flex-direction: column;
+                }
+                
+                .mobile-full {
+                    width: 100% !important;
+                }
+                
+                .mobile-full:first-child {
+                    height: 60vh !important;
+                    min-height: 450px !important;
+                }
+                
+                .mobile-full:last-child {
+                    height: 40vh !important;
+                    min-height: 350px !important;
+                }
+            }
+            
+            /* Amélioration de l'utilisation de l'espace */
+            @media (min-width: 1280px) {
+                .desktop-full-height {
+                    height: calc(100vh - 4rem) !important;
+                }
+            }
         </style>
     </Fragment>
     
-    <!-- Zone principale avec disposition moderne qui prend toute la hauteur -->
-    <div class="h-full flex bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 p-4 gap-4">
+    <!-- Zone principale avec disposition moderne qui prend toute la hauteur (responsive) -->
+    <div class="flex-1 flex flex-col xl:flex-row bg-base-100 p-2 sm:p-4 lg:p-6 gap-3 lg:gap-6 mobile-stack desktop-full-height">
             
-            <!-- Première div : Affichage du SVG (panneau gauche) -->
-            <div class="w-1/2 h-full bg-gray-800 rounded-2xl shadow-xl border border-gray-700 flex flex-col">
-                <div class="px-4 py-2 border-b border-gray-700 bg-gray-750 rounded-t-2xl">
-                    <h2 class="text-sm font-semibold text-violet-300 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Première div : Affichage du SVG (panneau gauche - responsive) -->
+            <div class="mobile-full w-full xl:w-1/2 h-[60vh] xl:h-full card bg-base-200 shadow-xl flex flex-col">
+                <div class="card-body pb-2 pt-3">
+                    <h2 class="card-title text-base-content text-base sm:text-lg justify-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
-                        {ui[locale].generator.preview}
+                        <span class="hidden sm:inline">{ui[locale].generator.preview}</span>
+                        <span class="sm:hidden">Aperçu</span>
                     </h2>
                 </div>
                 
                 <!-- Zone d'affichage du SVG (prend la majeure partie de l'espace) -->
-                <div class="flex-1 p-6 flex items-center justify-center min-h-0">
-                    <div id="svg-container" class="w-full h-full flex items-center justify-center bg-gray-900 rounded-xl border border-gray-700">
-                        <div class="text-center text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="flex-1 px-2 sm:px-4 flex items-center justify-center min-h-0">
+                    <div id="svg-container" class="w-full h-full flex items-center justify-center rounded-xl border-2 border-base-300 overflow-hidden relative min-h-[300px] sm:min-h-[400px] lg:min-h-[500px]">
+                        <div class="text-center text-base-content/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <p class="text-lg font-medium">{ui[locale].generator.noSvg}</p>
-                            <p class="text-sm text-gray-400 mt-2">{ui[locale].generator.description}</p>
+                            <p class="text-sm sm:text-lg font-medium text-base-content">{ui[locale].generator.noSvg}</p>
+                            <p class="text-xs sm:text-sm text-base-content/70 mt-2 px-4 text-center">{ui[locale].generator.description}</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Stats en bas -->
-                <div class="px-4 py-2 bg-gray-750 border-t border-gray-700 rounded-b-2xl">
-                    <div class="flex justify-between text-xs text-gray-400">
-                        <span>--×--px</span>
-                        <span>0 éléments</span>
-                        <span>-- KB</span>
+                <div class="card-body pt-2">
+                    <div class="stats stats-horizontal lg:stats-vertical xl:stats-horizontal shadow bg-base-200">
+                        <div class="stat py-1 px-2">
+                            <div class="stat-title text-xs">Dimensions</div>
+                            <div class="stat-value text-xs sm:text-sm" id="svg-dimensions">--×--px</div>
+                        </div>
+                        <div class="stat py-1 px-2">
+                            <div class="stat-title text-xs">Éléments</div>
+                            <div class="stat-value text-xs sm:text-sm" id="svg-elements">0</div>
+                        </div>
+                        <div class="stat py-1 px-2">
+                            <div class="stat-title text-xs">Taille</div>
+                            <div class="stat-value text-xs sm:text-sm" id="svg-size">-- KB</div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Deuxième div : Chat + Zone de saisie (panneau droit) -->
-            <div class="w-1/2 h-full bg-black rounded-2xl shadow-xl border border-gray-800 flex flex-col">
+            <!-- Deuxième div : Chat + Zone de saisie (panneau droit - responsive) -->
+            <div class="mobile-full w-full xl:w-1/2 h-[40vh] xl:h-full card bg-base-300 shadow-xl flex flex-col">
                 <!-- En-tête de la conversation -->
-                <div class="px-4 py-2 border-b border-gray-800 flex items-center justify-between rounded-t-2xl bg-gray-900">
+                <div class="px-2 sm:px-4 py-2 border-b border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-t-2xl bg-gray-900 gap-2">
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 bg-red-500 rounded-full"></div>
                         <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
@@ -75,9 +141,15 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
                             {ui[locale].generator.conversation}
                         </span>
                     </div>
-                    <div class="flex gap-2">
-                        <button id="copy-btn" class="px-2 py-1 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded transition-colors">{ui[locale].generator.copy}</button>
-                        <button id="save-btn" class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors">{ui[locale].generator.save}</button>
+                    <div class="flex gap-1 sm:gap-2 flex-wrap">
+                        <button id="copy-btn" class="btn btn-xs sm:btn-sm btn-secondary">{ui[locale].generator.copy}</button>
+                        <button id="download-btn" class="btn btn-xs sm:btn-sm btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="hidden sm:inline">{ui[locale].gallery.download}</span>
+                        </button>
+                        <button id="save-btn" class="btn btn-xs sm:btn-sm btn-success">{ui[locale].generator.save}</button>
                     </div>
                     
                     <!-- Formulaire de métadonnées pour la sauvegarde -->
@@ -125,32 +197,49 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
                 </div>
                 
                 <!-- Formulaire de chat en bas du panneau droit -->
-                <form id="input-prompt-form" class="border-t border-gray-800 bg-gray-900 p-4 rounded-b-2xl" autocomplete="off">
+                <form id="input-prompt-form" class="border-t border-gray-800 bg-gray-900 p-2 sm:p-4 rounded-b-2xl" autocomplete="off">
                     <!-- Champs cachés pour l'historique et l'ID (pour compatibilité future) -->
                     <input type="hidden" name="history" id="history-input" value="" />
                     <input type="hidden" name="id" id="svg-id-input" value="" />
                     
                     <div class="flex flex-col gap-2 w-full">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                            <label class="text-xs text-gray-400 hidden sm:block">{ui[locale].generator.modelLabel}:</label>
+                            <select id="model-select" class="select select-xs sm:select-sm bg-gray-800 border-gray-600 text-gray-200 flex-1 sm:flex-none sm:w-52">
+                                <option value="gpt-4o-mini">GPT-4o Mini (Recommandé)</option>
+                                <option value="gpt-4o">GPT-4o (Premium)</option>
+                                <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                                <option value="deepseek-coder">DeepSeek Coder</option>
+                                <option value="qwen-coder">Qwen 2.5 Coder</option>
+                                <option value="codellama">CodeLlama 34B</option>
+                                <option value="mistral-7b">Mistral 7B (Gratuit)</option>
+                                <option value="llama-3.1">Llama 3.1 8B (Gratuit)</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                             <input 
                                 id="prompt-input" 
                                 name="editPrompt" 
                                 type="text" 
-                                class="input flex-grow bg-gray-800 border-gray-600 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
+                                class="input input-sm sm:input-md flex-grow bg-gray-800 border-gray-600 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
                                 placeholder={ui[locale].generator.placeholder}
                             />
-                            <button id="generate-button" class="btn btn-primary" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                                {ui[locale].generator.generate}
-                            </button>
-                            <button id="edit-button" class="btn btn-secondary" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                </svg>
-                                {ui[locale].generator.edit}
-                            </button>
+                            <div class="flex gap-2">
+                                <button id="generate-button" class="btn btn-sm sm:btn-md btn-primary btn-enhanced flex-1 sm:flex-none" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">{ui[locale].generator.generate}</span>
+                                    <span class="sm:hidden">{ui[locale].generator.generate}</span>
+                                </button>
+                                <button id="edit-button" class="btn btn-sm sm:btn-md btn-secondary btn-enhanced flex-1 sm:flex-none" type="button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">{ui[locale].generator.edit}</span>
+                                    <span class="sm:hidden">{ui[locale].generator.edit}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -168,18 +257,81 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
     // Liste pour l'historique des échanges
     let promptList = [];
     
+    // Fonction pour optimiser l'affichage du SVG (plus simple et permissive)
+    function optimizeSvgDisplay(svgCode) {
+        if (!svgCode) return;
+        
+        const svgContainer = document.getElementById('svg-container');
+        const svgElement = svgContainer.querySelector('svg');
+        
+        if (svgElement) {
+            // Laisser le SVG prendre sa taille naturelle mais dans les limites du conteneur
+            svgElement.style.maxWidth = '95%';
+            svgElement.style.maxHeight = '95%'; 
+            svgElement.style.width = 'auto';
+            svgElement.style.height = 'auto';
+            
+            console.log('SVG affiché avec taille naturelle optimisée');
+        }
+    }
+    
+    // Fonction pour mettre à jour les statistiques du SVG
+    function updateSvgStats(svgCode) {
+        if (!svgCode) {
+            document.getElementById('svg-dimensions').textContent = '--×--px';
+            document.getElementById('svg-elements').textContent = '0';
+            document.getElementById('svg-size').textContent = '-- KB';
+            return;
+        }
+
+        // Extraire les dimensions
+        const widthMatch = svgCode.match(/width="(\d+)"/);
+        const heightMatch = svgCode.match(/height="(\d+)"/);
+        const width = widthMatch ? widthMatch[1] : '300';
+        const height = heightMatch ? heightMatch[1] : '200';
+        
+        // Compter les éléments
+        const elementCount = (svgCode.match(/<(rect|circle|ellipse|line|polyline|polygon|path|text|g)/gi) || []).length;
+        
+        // Calculer la taille
+        const sizeInBytes = new Blob([svgCode]).size;
+        const sizeInKB = (sizeInBytes / 1024).toFixed(1);
+        
+        // Mettre à jour l'affichage
+        document.getElementById('svg-dimensions').textContent = `${width}×${height}px`;
+        document.getElementById('svg-elements').textContent = `${elementCount}`;
+        document.getElementById('svg-size').textContent = `${sizeInKB} KB`;
+    }
+    
     // Références aux éléments du DOM
     const form = document.getElementById('input-prompt-form');
     const svgPreview = document.getElementById('svg-container');
     const chatHistory = document.getElementById('chat-history');
+    
+    // Observer le redimensionnement pour réajuster le SVG
+    const resizeObserver = new ResizeObserver((entries) => {
+        if (currentSvgCode && svgPreview.querySelector('svg')) {
+            setTimeout(() => {
+                optimizeSvgDisplay(currentSvgCode);
+            }, 100);
+        }
+    });
+    
+    if (svgPreview) {
+        resizeObserver.observe(svgPreview);
+    }
 	
     // Fonction pour générer le SVG à partir du prompt
     async function generateSVG(messages) {
         console.log('Generating SVG for messages:', messages);
+        const selectedModel = document.getElementById('model-select').value;
         const res = await fetch('/api/generateSVG', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: messages }),
+            body: JSON.stringify({ 
+                messages: messages,
+                model: selectedModel 
+            }),
         });
         const data = await res.json();
         return data.svg; // Retourne l'objet complet comme avant
@@ -377,9 +529,17 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
             // Afficher le SVG généré
             svgPreview.innerHTML = svgCode;
             
+            // Optimiser l'affichage du SVG après un petit délai pour laisser le DOM se mettre à jour
+            setTimeout(() => {
+                optimizeSvgDisplay(svgCode);
+            }, 100);
+            
             // Sauvegarder pour les fonctions de copie/sauvegarde
             currentSvgCode = svgCode;
             currentPrompt = prompt;
+            
+            // Mettre à jour les statistiques
+            updateSvgStats(svgCode);
             
             // Ajouter le code SVG à l'historique du chat
             const aiChatBubble = `
@@ -469,6 +629,11 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
             // Afficher le SVG généré
             svgPreview.innerHTML = svgCode;
             
+            // Optimiser l'affichage du SVG après un petit délai
+            setTimeout(() => {
+                optimizeSvgDisplay(svgCode);
+            }, 100);
+            
             // Sauvegarder pour les fonctions de copie/sauvegarde
             currentSvgCode = svgCode;
             currentPrompt = prompt;
@@ -545,6 +710,35 @@ const locale = (Object.keys(ui).includes(currentLanguage) ? currentLanguage : de
     if (editButton) {
         editButton.addEventListener('click', async () => {
             await handleEdit();
+        });
+    }
+
+    // Fonctionnalité de téléchargement du SVG
+    const downloadBtn = document.getElementById("download-btn");
+    if (downloadBtn) {
+        downloadBtn.addEventListener("click", () => {
+            if (currentSvgCode) {
+                const blob = new Blob([currentSvgCode], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `svg-${Date.now()}.svg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Feedback visuel
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Téléchargé !';
+                downloadBtn.style.backgroundColor = "#10b981";
+                setTimeout(() => {
+                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.style.backgroundColor = "";
+                }, 2000);
+            } else {
+                alert("Aucun SVG à télécharger");
+            }
         });
     }
 

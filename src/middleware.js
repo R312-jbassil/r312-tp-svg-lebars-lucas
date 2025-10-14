@@ -22,9 +22,9 @@ export const onRequest = async (context, next) => {
         }
     }
 
-    // Pour les routes API, on exige l'authentification sauf pour /api/login et /api/signup
+    // Pour les routes API, on exige l'authentification sauf pour /api/login, /api/signup et /api/setLanguage
     if (context.url.pathname.startsWith('/api/')) {
-        const apiAllowed = ['/api/login', '/api/signup'];
+        const apiAllowed = ['/api/login', '/api/signup', '/api/setLanguage'];
         if (!context.locals.user && !apiAllowed.includes(context.url.pathname)) {
             // Si l'utilisateur n'est pas connecté, on retourne une erreur 401 (non autorisé)
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
